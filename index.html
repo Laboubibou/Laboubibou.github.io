@@ -3,158 +3,372 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Auth Avancée - Démo</title>
+  <title>Riders Republic - Classements</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; margin: 2rem; }
-    form { margin-bottom: 1rem; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; }
-    input { margin: .25rem 0; display: block; width: 300px; }
-    code { background: #f4f4f4; padding: .25rem .5rem; border-radius: 4px; }
+    :root {
+      --bg: #0d0f10;
+      --surface: #15181b;
+      --surface-2: #1a1f23;
+      --text: #e8ecef;
+      --muted: #a7b0b7;
+      --brand: #f1ff00; /* neon yellow */
+      --accent: #21c9b6; /* teal */
+      --danger: #ff5a5f;
+      --gold: #f6c90e;
+      --silver: #c0c7d1;
+      --bronze: #cd7f32;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height: 1.35;
+      background-image: radial-gradient(1000px 400px at -10% -20%, rgba(33,201,182,.10), transparent),
+                        radial-gradient(800px 300px at 120% 10%, rgba(241,255,0,.06), transparent);
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(13,15,16,.85), rgba(13,15,16,.55));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .container { width: min(1200px, 94%); margin: 0 auto; }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: .3px;
+    }
+    .brand-badge { width: 36px; height: 36px; border-radius: 10px; background: var(--brand); color: #111; display: grid; place-items: center; font-weight: 900; box-shadow: var(--shadow); }
+    .nav-cta { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08);
+      background: var(--surface); color: var(--text); cursor: pointer; transition: .2s ease; font-weight: 600;
+    }
+    .btn:hover { transform: translateY(-1px); background: var(--surface-2); }
+    .btn--brand { background: var(--brand); color: #0d0f10; border-color: rgba(0,0,0,.1); }
+    .btn--brand:hover { filter: brightness(.98); }
+
+    /* Hero / filters */
+    .hero { padding: 24px 0 6px; }
+    .title { font-family: 'Bebas Neue', sans-serif; letter-spacing: .5px; font-size: clamp(30px, 5vw, 52px); line-height: 1; margin: 2px 0 14px; }
+    .subtitle { color: var(--muted); margin-bottom: 22px; }
+
+    .filters { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+    .chip-group { grid-column: span 12; display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: var(--surface); border: 1px solid rgba(255,255,255,.06); color: var(--text); padding: 8px 12px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 14px;
+    }
+    .chip.is-active { background: var(--brand); color: #111; border-color: rgba(0,0,0,.1); }
+
+    .field { grid-column: span 6; display: flex; flex-direction: column; gap: 8px; }
+    .field label { font-size: 13px; color: var(--muted); }
+    .select, .input { width: 100%; padding: 12px 14px; border-radius: 12px; background: var(--surface); color: var(--text); border: 1px solid rgba(255,255,255,.08); outline: none; }
+
+    .tabs { margin-top: 12px; display: inline-flex; background: var(--surface); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; }
+    .tab { padding: 10px 14px; cursor: pointer; font-weight: 700; color: var(--muted); }
+    .tab.is-active { background: var(--brand); color: #111; }
+
+    /* Podium */
+    .podium { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; margin: 20px 0; }
+    .podium-card {
+      grid-column: span 4; background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow);
+    }
+    .medal { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font-weight: 900; color: #111; }
+    .medal.gold { background: var(--gold); }
+    .medal.silver { background: var(--silver); }
+    .medal.bronze { background: var(--bronze); }
+    .player { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+    .avatar { width: 42px; height: 42px; border-radius: 12px; background: #222; display: grid; place-items: center; font-weight: 800; }
+    .score { font-size: 22px; font-weight: 800; margin-top: 6px; }
+    .meta { font-size: 12px; color: var(--muted); }
+
+    /* Table */
+    .card { background: linear-gradient(180deg, var(--surface), rgba(26,31,35,.8)); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .table-head { display: grid; grid-template-columns: 60px 1.3fr 0.8fr 1fr 0.8fr 0.8fr 0.8fr; gap: 12px; padding: 14px 16px; background: rgba(255,255,255,.03); border-bottom: 1px solid rgba(255,255,255,.06); position: sticky; top: 64px; z-index: 5; }
+    .th { color: var(--muted); font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .rows { max-height: 560px; overflow: auto; }
+    .row { display: grid; grid-template-columns: 60px 1.3fr 0.8fr 1fr 0.8fr 0.8fr 0.8fr; gap: 12px; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .row:hover { background: rgba(255,255,255,.03); }
+    .rank { font-weight: 900; color: var(--muted); }
+    .tag { padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; background: rgba(255,255,255,.06); }
+
+    .toolbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; gap: 12px; }
+    .search { flex: 1; display: flex; gap: 8px; }
+    .search input { flex: 1; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .table-head, .row { grid-template-columns: 50px 1.2fr 1fr 1fr 0.8fr 0.8fr; }
+      .hide-md { display: none; }
+      .podium-card { grid-column: span 12; }
+      .field { grid-column: span 12; }
+    }
+    @media (max-width: 540px) {
+      .nav { padding: 10px 0; }
+      .title { font-size: 34px; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+    }
   </style>
 </head>
 <body>
-  <h1>Démo Auth Avancée</h1>
-
-  <section>
-    <h2>Inscription</h2>
-    <form id="registerForm">
-      <input type="email" id="regEmail" placeholder="Email" required />
-      <input type="password" id="regPassword" placeholder="Mot de passe" required />
-      <button>S'inscrire</button>
-    </form>
-  </section>
-
-  <section>
-    <h2>Connexion</h2>
-    <form id="loginForm">
-      <input type="email" id="loginEmail" placeholder="Email" required />
-      <input type="password" id="loginPassword" placeholder="Mot de passe" required />
-      <input type="text" id="loginTotp" placeholder="Code TOTP (si MFA)" />
-      <button>Se connecter</button>
-    </form>
-    <div>
-      <button id="requestReset">Demander réinitialisation</button>
+  <header class="header">
+    <div class="container nav">
+      <div class="brand">
+        <div class="brand-badge">RR</div>
+        <div>
+          <div style="font-weight:900;">Riders Republic</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:-2px;">Classements communautaires</div>
+        </div>
+      </div>
+      <div class="nav-cta">
+        <a class="btn" href="/auth">Admin / Auth</a>
+        <a class="btn btn--brand" href="#" id="addRunBtn">+ Soumettre un run</a>
+      </div>
     </div>
-  </section>
+  </header>
 
-  <section>
-    <h2>Jetons</h2>
-    <div>Access: <code id="accessToken">-</code></div>
-    <div>Refresh: <code id="refreshToken">-</code></div>
-    <button id="refreshBtn">Rafraîchir le token</button>
-    <button id="logoutBtn">Logout</button>
-  </section>
+  <main class="container">
+    <section class="hero">
+      <h1 class="title">Classements officieux Points & Chronos</h1>
+      <div class="subtitle">Filtre par discipline, épreuve, plateforme ou recherche de joueur.</div>
 
-  <section>
-    <h2>MFA</h2>
-    <form id="enableMfaForm">
-      <input type="number" id="userIdForMfa" placeholder="User ID" required />
-      <button>Activer MFA</button>
-    </form>
-    <img id="mfaQr" alt="QR" />
-    <div>Secret: <code id="mfaSecret">-</code></div>
-    <form id="confirmMfaForm">
-      <input type="number" id="userIdForMfa2" placeholder="User ID" required />
-      <input type="text" id="mfaTotp" placeholder="Code TOTP" required />
-      <button>Confirmer MFA</button>
-    </form>
-  </section>
+      <div class="filters">
+        <div class="chip-group" id="disciplineChips">
+          <button class="chip is-active" data-value="all">Tous</button>
+          <button class="chip" data-value="bike">Vélo</button>
+          <button class="chip" data-value="snow">Neige</button>
+          <button class="chip" data-value="wingsuit">Wingsuit</button>
+          <button class="chip" data-value="rocket">Rocket Wings</button>
+        </div>
 
-  <section>
-    <h2>Sessions</h2>
-    <form id="listSessionsForm">
-      <input type="number" id="userIdForSessions" placeholder="User ID" required />
-      <button>Voir les sessions</button>
-    </form>
-    <pre id="sessions"></pre>
-    <form id="revokeSessionForm">
-      <input type="number" id="userIdForRevoke" placeholder="User ID" required />
-      <input type="number" id="sessionIdToRevoke" placeholder="Session ID" required />
-      <button>Révoquer</button>
-    </form>
-  </section>
+        <div class="field">
+          <label>Épreuve</label>
+          <select class="select" id="eventSelect">
+            <option value="all">Toutes</option>
+            <option>Urban Freestyle</option>
+            <option>Big Air Park</option>
+            <option>Redwood Sprint</option>
+            <option>Glacier Descent</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Plateforme</label>
+          <select class="select" id="platformSelect">
+            <option value="all">Toutes</option>
+            <option>PC</option>
+            <option>PlayStation</option>
+            <option>Xbox</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="tabs" id="modeTabs">
+        <button class="tab is-active" data-mode="points">Points</button>
+        <button class="tab" data-mode="time">Chronos</button>
+      </div>
+    </section>
+
+    <section class="podium" id="podium">
+      <!-- Top 3 injected here -->
+    </section>
+
+    <section class="card">
+      <div class="toolbar">
+        <div class="search">
+          <input class="input" id="searchInput" placeholder="Rechercher un joueur ou une épreuve..." />
+          <button class="btn" id="clearSearch">Effacer</button>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn" id="exportCsv">Exporter CSV</button>
+          <button class="btn" id="resetFilters">Réinitialiser</button>
+        </div>
+      </div>
+
+      <div class="table-head">
+        <div class="th" data-sort="rank">#</div>
+        <div class="th" data-sort="player">Joueur</div>
+        <div class="th" data-sort="platform">Plateforme</div>
+        <div class="th" data-sort="event">Épreuve</div>
+        <div class="th" data-sort="score" id="th-score">Score</div>
+        <div class="th" data-sort="timeMs" id="th-time">Temps</div>
+        <div class="th hide-md" data-sort="date">Date</div>
+      </div>
+      <div class="rows" id="rows"></div>
+    </section>
+  </main>
 
   <script>
-    const api = (path, opts={}) => fetch(`/api/auth${path}`, { method: 'GET', ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers||{}) } });
-    const setText = (id, val) => document.getElementById(id).textContent = val || '-';
+    // --- Mock data (remplaçable par /api/leaderboard) ---
+    const sample = [
+      { rank: 1, player: 'NovaRider', platform: 'PC', event: 'Urban Freestyle', discipline: 'bike', mode: 'points', score: 98450, timeMs: null, date: '2025-06-28' },
+      { rank: 2, player: 'Shiro', platform: 'PlayStation', event: 'Urban Freestyle', discipline: 'bike', mode: 'points', score: 96120, timeMs: null, date: '2025-06-21' },
+      { rank: 3, player: 'Lynx', platform: 'Xbox', event: 'Urban Freestyle', discipline: 'bike', mode: 'points', score: 94410, timeMs: null, date: '2025-06-20' },
+      { rank: 4, player: 'PeakFox', platform: 'PC', event: 'Big Air Park', discipline: 'snow', mode: 'points', score: 91040, timeMs: null, date: '2025-06-26' },
+      { rank: 5, player: 'Sage', platform: 'PC', event: 'Big Air Park', discipline: 'snow', mode: 'points', score: 89120, timeMs: null, date: '2025-06-25' },
+      { rank: 1, player: 'NovaRider', platform: 'PC', event: 'Redwood Sprint', discipline: 'bike', mode: 'time', score: null, timeMs: 112340, date: '2025-06-22' },
+      { rank: 2, player: 'Shiro', platform: 'PlayStation', event: 'Redwood Sprint', discipline: 'bike', mode: 'time', score: null, timeMs: 113280, date: '2025-06-24' },
+      { rank: 3, player: 'Lynx', platform: 'Xbox', event: 'Redwood Sprint', discipline: 'bike', mode: 'time', score: null, timeMs: 113990, date: '2025-06-26' },
+      { rank: 4, player: 'PeakFox', platform: 'PC', event: 'Glacier Descent', discipline: 'wingsuit', mode: 'time', score: null, timeMs: 124200, date: '2025-06-20' },
+      { rank: 5, player: 'Sage', platform: 'PC', event: 'Glacier Descent', discipline: 'wingsuit', mode: 'time', score: null, timeMs: 127400, date: '2025-06-18' },
+    ];
 
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('regEmail').value;
-      const password = document.getElementById('regPassword').value;
-      const r = await api('/register', { method: 'POST', body: JSON.stringify({ email, password }) });
-      alert('Inscription effectuée, vérifiez l\'email dans la console.');
+    const state = {
+      mode: 'points',
+      discipline: 'all',
+      event: 'all',
+      platform: 'all',
+      search: '',
+      sort: { key: 'rank', dir: 'asc' },
+    };
+
+    const rowsEl = document.getElementById('rows');
+    const podiumEl = document.getElementById('podium');
+
+    function formatNumber(n) { return n.toLocaleString('fr-FR'); }
+    function formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+      const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+      const hundreds = Math.floor((ms % 1000) / 10).toString().padStart(2, '0');
+      return `${minutes}:${seconds}.${hundreds}`;
+    }
+
+    function applyFilters(data) {
+      return data.filter(r =>
+        r.mode === state.mode
+        && (state.discipline === 'all' || r.discipline === state.discipline)
+        && (state.event === 'all' || r.event === state.event)
+        && (state.platform === 'all' || r.platform === state.platform)
+        && (!state.search || `${r.player} ${r.event}`.toLowerCase().includes(state.search.toLowerCase()))
+      );
+    }
+
+    function sortData(data) {
+      const { key, dir } = state.sort;
+      const mul = dir === 'asc' ? 1 : -1;
+      return [...data].sort((a, b) => {
+        const va = a[key] ?? 0;
+        const vb = b[key] ?? 0;
+        if (va < vb) return -1 * mul;
+        if (va > vb) return 1 * mul;
+        return 0;
+      });
+    }
+
+    function renderPodium(data) {
+      const top3 = sortData(data).slice(0, 3);
+      podiumEl.innerHTML = top3.map((r, i) => `
+        <div class="podium-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="medal ${i===0?'gold':i===1?'silver':'bronze'}">${i+1}</div>
+            <div class="tag">${r.event}</div>
+          </div>
+          <div class="player">
+            <div class="avatar">${r.player.slice(0,2).toUpperCase()}</div>
+            <div>
+              <div style="font-weight:800;">${r.player}</div>
+              <div class="meta">${r.platform} • ${r.discipline}</div>
+            </div>
+          </div>
+          <div class="score">${state.mode==='points' ? formatNumber(r.score) + ' pts' : formatTime(r.timeMs)}</div>
+          <div class="meta">${new Date(r.date).toLocaleDateString('fr-FR')}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderRows(data) {
+      rowsEl.innerHTML = data.map(r => `
+        <div class="row">
+          <div class="rank">${r.rank}</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="avatar" style="width:32px;height:32px;border-radius:10px;">${r.player.slice(0,2).toUpperCase()}</div>
+            <div>
+              <div style="font-weight:700;">${r.player}</div>
+              <div class="meta hide-md">${r.discipline}</div>
+            </div>
+          </div>
+          <div>${r.platform}</div>
+          <div>${r.event}</div>
+          <div>${state.mode==='points' ? formatNumber(r.score) : '-'}</div>
+          <div>${state.mode==='time' ? formatTime(r.timeMs) : '-'}</div>
+          <div class="hide-md">${new Date(r.date).toLocaleDateString('fr-FR')}</div>
+        </div>
+      `).join('');
+    }
+
+    function update() {
+      const filtered = applyFilters(sample);
+      const sorted = sortData(filtered);
+      renderPodium(sorted);
+      renderRows(sorted);
+      document.getElementById('th-score').style.opacity = state.mode==='points' ? '1' : '.4';
+      document.getElementById('th-time').style.opacity = state.mode==='time' ? '1' : '.4';
+    }
+
+    // Interactions
+    document.getElementById('disciplineChips').addEventListener('click', (e) => {
+      if (!e.target.classList.contains('chip')) return;
+      document.querySelectorAll('#disciplineChips .chip').forEach(c => c.classList.remove('is-active'));
+      e.target.classList.add('is-active');
+      state.discipline = e.target.dataset.value;
+      update();
     });
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      const totp = document.getElementById('loginTotp').value || undefined;
-      const r = await api('/login', { method: 'POST', body: JSON.stringify({ email, password, totp }) });
-      const data = await r.json();
-      if (!r.ok) { alert(JSON.stringify(data)); return; }
-      setText('accessToken', data.accessToken);
-      setText('refreshToken', data.refreshToken);
+    document.getElementById('eventSelect').addEventListener('change', e => { state.event = e.target.value; update(); });
+    document.getElementById('platformSelect').addEventListener('change', e => { state.platform = e.target.value; update(); });
+
+    document.getElementById('modeTabs').addEventListener('click', (e) => {
+      if (!e.target.classList.contains('tab')) return;
+      document.querySelectorAll('#modeTabs .tab').forEach(t => t.classList.remove('is-active'));
+      e.target.classList.add('is-active');
+      state.mode = e.target.dataset.mode;
+      // Adjust default sort
+      state.sort = state.mode === 'points' ? { key: 'score', dir: 'desc' } : { key: 'timeMs', dir: 'asc' };
+      update();
     });
 
-    document.getElementById('refreshBtn').addEventListener('click', async () => {
-      const refreshToken = document.getElementById('refreshToken').textContent;
-      const r = await api('/refresh', { method: 'POST', body: JSON.stringify({ refreshToken }) });
-      const data = await r.json();
-      if (!r.ok) { alert(JSON.stringify(data)); return; }
-      setText('accessToken', data.accessToken);
-      setText('refreshToken', data.refreshToken);
+    document.getElementById('searchInput').addEventListener('input', e => { state.search = e.target.value; update(); });
+    document.getElementById('clearSearch').addEventListener('click', () => { document.getElementById('searchInput').value=''; state.search=''; update(); });
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      state.discipline='all'; state.event='all'; state.platform='all'; state.search='';
+      document.getElementById('searchInput').value='';
+      document.querySelectorAll('#disciplineChips .chip').forEach((c,i)=>c.classList.toggle('is-active', i===0));
+      document.getElementById('eventSelect').value='all';
+      document.getElementById('platformSelect').value='all';
+      update();
     });
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      const refreshToken = document.getElementById('refreshToken').textContent;
-      await api('/logout', { method: 'POST', body: JSON.stringify({ refreshToken }) });
-      setText('accessToken', '-');
-      setText('refreshToken', '-');
+    document.querySelectorAll('.th').forEach(th => th.addEventListener('click', () => {
+      const key = th.dataset.sort;
+      if (!key) return;
+      if (state.sort.key === key) {
+        state.sort.dir = state.sort.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        state.sort.key = key; state.sort.dir = 'asc';
+      }
+      update();
+    }));
+
+    document.getElementById('exportCsv').addEventListener('click', () => {
+      const rows = sortData(applyFilters(sample));
+      const headers = ['rank','player','platform','event','discipline','mode','score','timeMs','date'];
+      const csv = [headers.join(',')].concat(rows.map(r => headers.map(h => r[h] ?? '').join(','))).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='classement_rr.csv'; a.click(); URL.revokeObjectURL(url);
     });
 
-    document.getElementById('requestReset').addEventListener('click', async () => {
-      const email = document.getElementById('loginEmail').value;
-      await api('/request-password-reset', { method: 'POST', body: JSON.stringify({ email }) });
-      alert('Email de réinitialisation envoyé (voir console).');
-    });
-
-    document.getElementById('enableMfaForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userId = Number(document.getElementById('userIdForMfa').value);
-      const r = await api('/enable-mfa', { method: 'POST', body: JSON.stringify({ userId }) });
-      const data = await r.json();
-      if (!r.ok) { alert(JSON.stringify(data)); return; }
-      document.getElementById('mfaQr').src = data.qrImageDataUrl;
-      document.getElementById('mfaSecret').textContent = data.secret;
-    });
-
-    document.getElementById('confirmMfaForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userId = Number(document.getElementById('userIdForMfa2').value);
-      const totp = document.getElementById('mfaTotp').value;
-      const r = await api('/confirm-mfa', { method: 'POST', body: JSON.stringify({ userId, totp }) });
-      const data = await r.json();
-      if (!r.ok) { alert(JSON.stringify(data)); return; }
-      alert('MFA activée');
-    });
-
-    document.getElementById('listSessionsForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userId = Number(document.getElementById('userIdForSessions').value);
-      const r = await fetch(`/api/auth/sessions?userId=${userId}`);
-      const data = await r.json();
-      document.getElementById('sessions').textContent = JSON.stringify(data.sessions, null, 2);
-    });
-
-    document.getElementById('revokeSessionForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userId = Number(document.getElementById('userIdForRevoke').value);
-      const sessionId = Number(document.getElementById('sessionIdToRevoke').value);
-      const r = await api('/sessions/revoke', { method: 'POST', body: JSON.stringify({ userId, sessionId }) });
-      if (!r.ok) { alert('Erreur'); return; }
-      alert('Session révoquée');
-    });
+    // Initial mode sort preference
+    state.sort = { key: 'score', dir: 'desc' };
+    update();
   </script>
 </body>
 </html>
