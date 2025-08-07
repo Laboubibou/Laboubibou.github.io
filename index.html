@@ -1,7 +1,160 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auth Avancée - Démo</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    form { margin-bottom: 1rem; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; }
+    input { margin: .25rem 0; display: block; width: 300px; }
+    code { background: #f4f4f4; padding: .25rem .5rem; border-radius: 4px; }
+  </style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+  <h1>Démo Auth Avancée</h1>
+
+  <section>
+    <h2>Inscription</h2>
+    <form id="registerForm">
+      <input type="email" id="regEmail" placeholder="Email" required />
+      <input type="password" id="regPassword" placeholder="Mot de passe" required />
+      <button>S'inscrire</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Connexion</h2>
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Mot de passe" required />
+      <input type="text" id="loginTotp" placeholder="Code TOTP (si MFA)" />
+      <button>Se connecter</button>
+    </form>
+    <div>
+      <button id="requestReset">Demander réinitialisation</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Jetons</h2>
+    <div>Access: <code id="accessToken">-</code></div>
+    <div>Refresh: <code id="refreshToken">-</code></div>
+    <button id="refreshBtn">Rafraîchir le token</button>
+    <button id="logoutBtn">Logout</button>
+  </section>
+
+  <section>
+    <h2>MFA</h2>
+    <form id="enableMfaForm">
+      <input type="number" id="userIdForMfa" placeholder="User ID" required />
+      <button>Activer MFA</button>
+    </form>
+    <img id="mfaQr" alt="QR" />
+    <div>Secret: <code id="mfaSecret">-</code></div>
+    <form id="confirmMfaForm">
+      <input type="number" id="userIdForMfa2" placeholder="User ID" required />
+      <input type="text" id="mfaTotp" placeholder="Code TOTP" required />
+      <button>Confirmer MFA</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Sessions</h2>
+    <form id="listSessionsForm">
+      <input type="number" id="userIdForSessions" placeholder="User ID" required />
+      <button>Voir les sessions</button>
+    </form>
+    <pre id="sessions"></pre>
+    <form id="revokeSessionForm">
+      <input type="number" id="userIdForRevoke" placeholder="User ID" required />
+      <input type="number" id="sessionIdToRevoke" placeholder="Session ID" required />
+      <button>Révoquer</button>
+    </form>
+  </section>
+
+  <script>
+    const api = (path, opts={}) => fetch(`/api/auth${path}`, { method: 'GET', ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers||{}) } });
+    const setText = (id, val) => document.getElementById(id).textContent = val || '-';
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const r = await api('/register', { method: 'POST', body: JSON.stringify({ email, password }) });
+      alert('Inscription effectuée, vérifiez l\'email dans la console.');
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const totp = document.getElementById('loginTotp').value || undefined;
+      const r = await api('/login', { method: 'POST', body: JSON.stringify({ email, password, totp }) });
+      const data = await r.json();
+      if (!r.ok) { alert(JSON.stringify(data)); return; }
+      setText('accessToken', data.accessToken);
+      setText('refreshToken', data.refreshToken);
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', async () => {
+      const refreshToken = document.getElementById('refreshToken').textContent;
+      const r = await api('/refresh', { method: 'POST', body: JSON.stringify({ refreshToken }) });
+      const data = await r.json();
+      if (!r.ok) { alert(JSON.stringify(data)); return; }
+      setText('accessToken', data.accessToken);
+      setText('refreshToken', data.refreshToken);
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      const refreshToken = document.getElementById('refreshToken').textContent;
+      await api('/logout', { method: 'POST', body: JSON.stringify({ refreshToken }) });
+      setText('accessToken', '-');
+      setText('refreshToken', '-');
+    });
+
+    document.getElementById('requestReset').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value;
+      await api('/request-password-reset', { method: 'POST', body: JSON.stringify({ email }) });
+      alert('Email de réinitialisation envoyé (voir console).');
+    });
+
+    document.getElementById('enableMfaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = Number(document.getElementById('userIdForMfa').value);
+      const r = await api('/enable-mfa', { method: 'POST', body: JSON.stringify({ userId }) });
+      const data = await r.json();
+      if (!r.ok) { alert(JSON.stringify(data)); return; }
+      document.getElementById('mfaQr').src = data.qrImageDataUrl;
+      document.getElementById('mfaSecret').textContent = data.secret;
+    });
+
+    document.getElementById('confirmMfaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = Number(document.getElementById('userIdForMfa2').value);
+      const totp = document.getElementById('mfaTotp').value;
+      const r = await api('/confirm-mfa', { method: 'POST', body: JSON.stringify({ userId, totp }) });
+      const data = await r.json();
+      if (!r.ok) { alert(JSON.stringify(data)); return; }
+      alert('MFA activée');
+    });
+
+    document.getElementById('listSessionsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = Number(document.getElementById('userIdForSessions').value);
+      const r = await fetch(`/api/auth/sessions?userId=${userId}`);
+      const data = await r.json();
+      document.getElementById('sessions').textContent = JSON.stringify(data.sessions, null, 2);
+    });
+
+    document.getElementById('revokeSessionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = Number(document.getElementById('userIdForRevoke').value);
+      const sessionId = Number(document.getElementById('sessionIdToRevoke').value);
+      const r = await api('/sessions/revoke', { method: 'POST', body: JSON.stringify({ userId, sessionId }) });
+      if (!r.ok) { alert('Erreur'); return; }
+      alert('Session révoquée');
+    });
+  </script>
 </body>
 </html>
