@@ -5,11 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentification - Riders Republic</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script>
+const firebaseConfig = {
+    apiKey: "AIzaSyD9OwXwwzkz4D9ICgwj4BTh1_cHJV2UVWA",
+    authDomain: "creation-de-compte-1.firebaseapp.com",
+    projectId: "creation-de-compte-1",
+    storageBucket: "creation-de-compte-1.firebasestorage.app",
+    messagingSenderId: "58322653126",
+    appId: "1:58322653126:web:1450b24d37459598362cc7"
+};
+firebase.initializeApp(firebaseConfig);
 
+// On attend que Firebase ait fini de charger l’état d’authentification AVANT de rediriger
+firebase.auth().onAuthStateChanged(function(user) {
+    // Si connecté ET qu’on est sur la page de login, on redirige vers l’accueil
+    if (user && window.location.pathname.endsWith('auth.html')) {
+        window.location.replace('index.html');
+    }
+});
+</script>
+    <script src="js/auth.js" defer></script>
     <style>
         :root {
             --bg: #0d0f10;
@@ -29,12 +46,17 @@
             justify-content: center;
         }
 
-        .auth-card {
-            background: var(--surface);
-            padding: 32px;
-            border-radius: 16px;
-            width: 90%;
+        .auth-container {
+            width: 100%;
             max-width: 400px;
+            padding: 16px;
+            border-radius: 8px;
+            background: var(--surface);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-card {
+            width: 100%;
         }
 
         .form-group {
@@ -86,13 +108,13 @@
             font-size: 32px;
         }
 
-        .auth-switch {
+        .switch-text {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 16px;
             color: var(--text);
         }
 
-        .auth-switch a {
+        .switch-text a {
             color: var(--brand);
             text-decoration: none;
             font-weight: 600;
@@ -100,131 +122,98 @@
     </style>
 </head>
 <body>
-    <div class="auth-card">
-        <div id="error" class="error"></div>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div id="loginForm">
+                <h2>Connexion</h2>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" placeholder="Mot de passe" required>
+                    </div>
+                    <button type="submit">Se connecter</button>
+                </form>
+                <p class="switch-text">
+                    Pas de compte ? <a href="#" id="showRegister">Créer un compte</a>
+                </p>
+            </div>
 
-        <!-- Login Form -->
-        <div id="loginForm">
-            <h2>Connexion</h2>
-            <form id="loginFormElement">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" required>
-                </div>
-                <div class="form-group">
-                    <label>Mot de passe</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit">Se connecter</button>
-            </form>
-            <p class="auth-switch">
-                Pas encore de compte ? 
-                <a href="#" id="showRegister">Créer un compte</a>
-            </p>
-        </div>
-
-        <!-- Register Form -->
-        <div id="registerForm" style="display: none;">
-            <h2>Créer un compte</h2>
-            <form id="registerFormElement">
-                <div class="form-group">
-                    <label>Nom d'utilisateur</label>
-                    <input type="text" id="registerUsername" required>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="registerEmail" required>
-                </div>
-                <div class="form-group">
-                    <label>Mot de passe</label>
-                    <input type="password" id="registerPassword" required minlength="6">
-                </div>
-                <button type="submit">Créer mon compte</button>
-            </form>
-            <p class="auth-switch">
-                Déjà un compte ? 
-                <a href="#" id="showLogin">Se connecter</a>
-            </p>
+            <div id="registerForm" style="display: none;">
+                <h2>Créer un compte</h2>
+                <form id="registerFormElement">
+                    <div class="form-group">
+                        <input type="text" id="registerUsername" placeholder="Nom d'utilisateur" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="registerEmail" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerPassword" placeholder="Mot de passe" required>
+                    </div>
+                    <button type="submit">S'inscrire</button>
+                </form>
+                <p class="switch-text">
+                    Déjà un compte ? <a href="#" id="showLogin">Se connecter</a>
+                </p>
+            </div>
         </div>
     </div>
 
     <script>
-        // Configuration Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyD9OwXwwzkz4D9ICgwj4BTh1_cHJV2UVWA",
-            authDomain: "creation-de-compte-1.firebaseapp.com",
-            projectId: "creation-de-compte-1",
-            storageBucket: "creation-de-compte-1.firebasestorage.app",
-            messagingSenderId: "58322653126",
-            appId: "1:58322653126:web:1450b24d37459598362cc7",
-            measurementId: "G-1D9YPCWK07"
-        };
+        async function init() {
+            const user = await checkAuth();
+            if (user) {
+                window.location.replace('/index.html');
+                return;
+            }
 
-        firebase.initializeApp(firebaseConfig);
-
-        // Attendre que Firebase soit initialisé
-        let authInitialized = false;
-
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!authInitialized) {
-                authInitialized = true;
-                if (user && window.location.pathname.includes('auth.html')) {
-                    window.location.replace('index.html');
+            // Gestionnaires de formulaires
+            document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    await auth.signInWithEmailAndPassword(
+                        document.getElementById('loginEmail').value,
+                        document.getElementById('loginPassword').value
+                    );
+                    window.location.replace('/index.html');
+                } catch (error) {
+                    alert(error.message);
                 }
-            }
-        });
+            });
 
-        // Gestion des formulaires de connexion/inscription
-        document.getElementById('loginFormElement').onsubmit = async (e) => {
-            e.preventDefault();
-            try {
-                await firebase.auth().signInWithEmailAndPassword(
-                    document.getElementById('loginEmail').value,
-                    document.getElementById('loginPassword').value
-                );
-            } catch (error) {
-                showError(error.message);
-            }
-        };
+            document.getElementById('registerFormElement').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    const { user } = await auth.createUserWithEmailAndPassword(
+                        document.getElementById('registerEmail').value,
+                        document.getElementById('registerPassword').value
+                    );
+                    await user.updateProfile({
+                        displayName: document.getElementById('registerUsername').value
+                    });
+                    window.location.replace('/index.html');
+                } catch (error) {
+                    alert(error.message);
+                }
+            });
+        }
 
-        document.getElementById('registerFormElement').onsubmit = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const username = document.getElementById('registerUsername').value;
-
-            try {
-                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                await userCredential.user.updateProfile({
-                    displayName: username
-                });
-                // La redirection sera gérée par onAuthStateChanged
-            } catch (error) {
-                showError(error.message);
-            }
-        };
-
-        // Form switching
-        document.getElementById('showRegister').onclick = e => {
+        // Basculement des formulaires
+        document.getElementById('showRegister').onclick = (e) => {
             e.preventDefault();
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('registerForm').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
         };
 
-        document.getElementById('showLogin').onclick = e => {
+        document.getElementById('showLogin').onclick = (e) => {
             e.preventDefault();
             document.getElementById('registerForm').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
         };
 
-        // Show error function
-        function showError(message) {
-            const error = document.getElementById('error');
-            error.textContent = message;
-            error.style.display = 'block';
-        }
+        init();
     </script>
 </body>
 </html>

@@ -503,6 +503,7 @@
         cursor: pointer;
     }
   </style>
+  <script src="js/auth.js" defer></script>
 </head>
 <body>
   <header class="header">
@@ -653,6 +654,31 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script>
+const firebaseConfig = {
+    apiKey: "AIzaSyD9OwXwwzkz4D9ICgwj4BTh1_cHJV2UVWA",
+    authDomain: "creation-de-compte-1.firebaseapp.com",
+    projectId: "Tcreation-de-compte-1",
+    storageBucket: "creation-de-compte-1.firebasestorage.app",
+    messagingSenderId: "58322653126",
+    appId: "1:58322653126:web:1450b24d37459598362cc7"
+};
+firebase.initializeApp(firebaseConfig);
+
+// On attend que Firebase ait fini de charger l’état d’authentification AVANT de rediriger
+firebase.auth().onAuthStateChanged(function(user) {
+    // Si pas connecté ET qu’on n’est pas déjà sur la page de login, on redirige
+    if (!user && !window.location.pathname.endsWith('auth.html')) {
+        window.location.replace('auth.html');
+    }
+    // Si connecté, tu peux afficher l’avatar ou autre ici
+    if (user) {
+        // Exemple : afficher l’avatar
+        const avatar = document.getElementById('userAvatar');
+        if (avatar) avatar.style.display = 'block';
+    }
+});
+</script>
+  <script>
     // --- Import automatique depuis Google Sheets ---
     let sample = [];
 
@@ -1094,5 +1120,25 @@ document.getElementById('submitForm').onsubmit = function(e) {
     });
 </script>
   </script>
+  <script>
+async function init() {
+    const user = await checkAuth();
+    if (!user) {
+        window.location.replace('/auth.html');
+        return;
+    }
+
+    // Configuration du menu utilisateur
+    const userMenu = document.getElementById('userMenu');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    logoutBtn.addEventListener('click', async () => {
+        await auth.signOut();
+        window.location.replace('/auth.html');
+    });
+}
+
+init();
+</script>
 </body>
 </html>
