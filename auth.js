@@ -1,49 +1,52 @@
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } 
-    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyD9OwXwwzkz4D9ICgwj4BTh1_cHJV2UVWA",
     authDomain: "creation-de-compte-1.firebaseapp.com",
     projectId: "creation-de-compte-1",
     storageBucket: "creation-de-compte-1.appspot.com",
     messagingSenderId: "58322653126",
-    appId: "1:58322653126:web:1450b24d37459598362cc7",
-    measurementId: "G-1D9YPCWK07"
+    appId: "1:58322653126:web:1450b24d37459598362cc7"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+firebase.initializeApp(firebaseConfig);
 
-  async function handleLogin(email, password) {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      localStorage.setItem('user', JSON.stringify(userCredential.user));
+document.getElementById('loginFormElement').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
       window.location.href = 'index.html';
-    } catch (error) {
-      showError(error.message);
-    }
-  }
+        })
+        .catch((error) => {
+            document.getElementById('loginError').textContent = error.message;
+            document.getElementById('loginError').style.display = 'block';
+        });
+});
 
-  async function handleRegister(username, email, password) {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: username });
-      localStorage.setItem('user', JSON.stringify(userCredential.user));
+document.getElementById('registerFormElement').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    const username = document.getElementById('registerUsername').value;
+
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            return userCredential.user.updateProfile({
+                displayName: username
+            });
+        })
+        .then(() => {
       window.location.href = 'index.html';
-    } catch (error) {
-      showError(error.message);
-    }
-  }
+        })
+        .catch((error) => {
+            document.getElementById('registerError').textContent = error.message;
+            document.getElementById('registerError').style.display = 'block';
+        });
+});
 
-  function showError(message) {
-    const errorDiv = document.getElementById('error-message');
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-  }
-
-  onAuthStateChanged(auth, (user) => {
+firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
     } else {
@@ -51,3 +54,4 @@
     }
   });
 </script>
+

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Connexion - Riders Republic</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <style>
@@ -115,7 +114,6 @@
         </div>
     </div>
     <script>
-        // Remplace ici par ta vraie config Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyD9OwXwwzkz4D9ICgwj4BTh1_cHJV2UVWA",
             authDomain: "creation-de-compte-1.firebaseapp.com",
@@ -126,14 +124,12 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        // Redirection automatique si déjà connecté
         firebase.auth().onAuthStateChanged(function(user) {
             if (user && window.location.pathname.endsWith('auth.html')) {
                 window.location.replace('index.html');
             }
         });
 
-        // Gestion du formulaire de connexion
         document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -142,14 +138,12 @@
             errorDiv.style.display = 'none';
             try {
                 await firebase.auth().signInWithEmailAndPassword(email, password);
-                // Redirection automatique par onAuthStateChanged
             } catch (error) {
                 errorDiv.textContent = error.message;
                 errorDiv.style.display = 'block';
             }
         });
 
-        // Gestion du formulaire d'inscription
         document.getElementById('registerFormElement').addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('registerEmail').value;
@@ -160,14 +154,12 @@
             try {
                 const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
                 await userCredential.user.updateProfile({ displayName: username });
-                // Redirection automatique par onAuthStateChanged
             } catch (error) {
                 errorDiv.textContent = error.message;
                 errorDiv.style.display = 'block';
             }
         });
 
-        // Switch entre login et register
         document.getElementById('showRegister').onclick = function(e) {
             e.preventDefault();
             document.getElementById('loginForm').style.display = 'none';
@@ -183,5 +175,7 @@
             document.getElementById('registerError').style.display = 'none';
         };
     </script>
+</body>
+</html>
 </body>
 </html>
