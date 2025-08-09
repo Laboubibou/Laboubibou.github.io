@@ -61,9 +61,21 @@
     .filters { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
     .chip-group { grid-column: span 12; display: flex; flex-wrap: wrap; gap: 8px; }
     .chip {
-      background: var(--surface); border: 1px solid rgba(255,255,255,.06); color: var(--text); padding: 8px 12px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 14px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
     }
-    .chip.is-active { background: var(--brand); color: #111; border-color: rgba(0,0,0,.1); }
+    .chip.is-active {
+      background: var(--brand);
+      color: #111;
+      border-color: rgba(0,0,0,.1);
+    }
 
     .field { grid-column: span 6; display: flex; flex-direction: column; gap: 8px; }
     .field label { font-size: 13px; color: var(--muted); }
@@ -280,26 +292,13 @@
 
       <div class="filters">
         <div class="chip-group" id="disciplineChips">
-          <button class="chip is-active" data-value="all">Tous</button>
-          <button class="chip" data-value="bike">Vélo</button>
-          <button class="chip" data-value="snow">Snow</button>
-          <button class="chip" data-value="air">Air</button>
+          <!-- Les chips seront injectées ici par JS -->
         </div>
 
         <div class="field">
           <label>Épreuve</label>
           <select class="select" id="eventSelect">
             <option value="all">Toutes les épreuves</option>
-            <option value="all">Courses</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Plateforme</label>
-          <select class="select" id="platformSelect">
-            <option value="all">Toutes</option>
-            <option>PC</option>
-            <option>PlayStation</option>
-            <option>Xbox</option>
           </select>
         </div>
       </div>
@@ -354,7 +353,7 @@
   </div>
 
   <div id="submitModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;">
-    <div style="background:#15181b;color:#e8ecef;padding:32px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);width:90%;max-width:420px;position:relative;">
+    <div style="background:#15181b;color:#e8ecef;padding:32px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0, 0, 0, .35);width:90%;max-width:420px;position:relative;">
       <button id="closeSubmit" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;">&times;</button>
       <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:18px;">Soumettre une run</h2>
       <form id="submitForm">
@@ -414,14 +413,14 @@
         update();
       });
 
-    const state = {
-      mode: 'points',
-      discipline: 'all',
-      event: 'all',
-      platform: 'all',
-      search: '',
-      sort: { key: 'rank', dir: 'asc' },
-    };
+    // État global
+const state = {
+  discipline: 'all',
+  mode: 'points',
+  event: 'all',
+  search: '',
+  sort: { key: 'rank', dir: 'asc' }
+};
 
     const rowsEl = document.getElementById('rows');
     const podiumEl = document.getElementById('podium');
@@ -531,8 +530,7 @@
     eventSelect.innerHTML = '<option value="all">Toutes les épreuves</option>';
     
     if (discipline !== 'all' && eventsByDiscipline[discipline]) {
-        const eventType = mode === 'points' ? 'points' : 'time';
-        const events = eventsByDiscipline[discipline][eventType] || [];
+        const events = eventsByDiscipline[discipline][mode] || [];
         
         events.forEach(event => {
             const option = document.createElement('option');
@@ -627,178 +625,69 @@
 
     // Dans la partie <script>, ajoute cette constante avec toutes les courses :
     const eventsByDiscipline = {
-    "bike": {
-        "points": [
-            "The Crown",
-            "The Patriarch",
-            "Family Feud",
-            "Santa Cruz Gravity Fest",
-            "Once Upon a Line",
-            "Infinite Waves",
-            "Around The World",
-            "B-Side",
-            "Trout's Trail",
-            "Captain Cap",
-            "Red Bull Joyride",
-            "50/50",
-            "Splintered",
-            "King Monkey",
-            "The Flow",
-            "Red Bull District Ride",
-            "Colorado Rush",
-            "The Circus",
-            "Bangers and Crash",
-            "Canyon Dual Style",
-            "The Freezer",
-            "Red Bull Rampage",
-            "Red Bull Rampage 2017"
-        ],
-        "time": [
-           "Welcome to Riders'",
-           "The Giants",
-           "Red Bull Holy Bike",
-           "Urban Freestyle",
-           "Diving Board",
-           "Skrrt Skrrt",
-           "Ridge TV Luckt Straight",
-           "Santa Cruz Urban Ride",
-            "Don't Look Down",
-            "Frontier",
-            "Sentinel Path",
-            "A Nice Day Out…",
-            "The Fissure Loop",
-            "Liberty Cap Ride",
-            "Red Bull Road Rage",
-            "Watchman Trail",
-            "Burnt Rubber",
-            "Understeer",
-            "Hoola Loop",
-            "Hospital Trail",
-            "V-Loop",
-            "The Swell",
-            "Red Bull Hardline",
-            "Lost in Sequoia",
-            "Floor by Floor",
-            "Xing",
-            "Arrow Run",
-            "Fox Racing Mtn. Rush",
-            "Ford Foot Out"
-        ]
-    },
-    "snow": {
-        "points": [
-            "Mammoth Can Jump",
-            "Taco'd",
-            "King Size",
-            "Red Bull Ultra Natural",
-            "The Bowl",
-            "Wolfpack",
-            "The Trunk",
-            "Eagles Are Flying",
-            "Snake Run",
-            "Burton Grove",
-            "Down of Teton",
-            "Bliss",
-            "Dude, Yu OK?",
-            "The Tusks",
-            "Ice Rider",
-            "Blind Test",
-            "Red Bull Linecatcher",
-            "Log Rider",
-            "Crest in Peace",
-            "Paint Scratch",
-            "Left Side",
-            "Hold My Bear",
-            "Ridge TV Option 7",
-            "Trees Don't Move",
-            "Tricks Derby",
-            "Sideways",
-            "The Village",
-            "Red Bull Play Streets",
-            "Snow Whisperer",
-            "Timber",
-            "Invasion",
-            "X-Games",
-            "Spine In The Dark",
-            "Rossignol Man Vs Wild",
-            "Red Bull Park Sessions",
-            "Salomon Masterclass"
-        ],
-        "time": [
-            "Dreamline",
-            "Spring Diet",
-            "Pathfinder",
-            "Red Bull Homerun",
-            "Hold Your Breath",
-            "Backbone",
-            "Ice Edge",
-            "8 Ball",
-            "Ridge TV Multiball",
-            "Killing Moon",
-            "Dirty Hairy",
-            "Bears On The Heels",
-            "Ridge TV Snow Rush",
-            "In Between The Line",
-            "Trees To One Go!",
-            "Rossignol Feel The Powder",
-            "Back On Track",
-            "For Real",
-            "Elbow To Elbow",
-            "Salomon All In One"
-        ]
-    },
-    "air": {
-        "points": [
-            "More'o Rocky",
-            "Marble Fly",
-            "Look At The Whole",
-            "Narrow Canyon",
-            "Ridge TV Wall of Windows",
-            "Break Point",
-            "Frozen Wings",
-            "Hoodoo You Do ?",
-            "Half Dome Kisses",
-            "Fog This!",
-            "Ridge TV Night Wing",
-            "Thermal Shock",
-            "Underline",
-            "Canyon Flight",
-            "Last Subway",
-            "Ford The Dive"
-
-        ],
-        "time": [
-            "Ridge TV The Dragonfly",
-            "King Run",
-            "In Between The Domes",
-            "Hot Wings",
-            "Migration",
-            "Stream Rocket",
-            "Rocket Congress",
-            "Ridge TV Angels Flight",
-            "8 Shape",
-            "Dine and Dash",
-            "Rocky Road",
-            "Night Bird",
-            "Canyon Loop",
-            "Broken Wing",
-            "Sunburn",
-            "The Crest",
-            "0 Faults",
-            "Red Bull Aces"
-        ]
-    }
+  bike: {
+    points: [
+      "The Crown", "The Patriarch", "Family Feud", "Santa Cruz Gravity Fest",
+      "Once Upon a Line", "Infinite Waves", "Around The World", "B-Side",
+      "Trout's Trail", "Captain Cap", "Red Bull Joyride", "50/50",
+      "Splintered", "King Monkey", "The Flow", "Red Bull District Ride",
+      "Colorado Rush", "The Circus", "Bangers and Crash", "Canyon Dual Style",
+      "The Freezer", "Red Bull Rampage", "Red Bull Rampage 2017"
+    ],
+    time: [
+      "Welcome to Riders'", "The Giants", "Red Bull Holy Bike", "Urban Freestyle",
+      "Diving Board", "Skrrt Skrrt", "Ridge TV Luckt Straight", "Santa Cruz Urban Ride",
+      "Don't Look Down", "Frontier", "Sentinel Path", "A Nice Day Out…",
+      "The Fissure Loop", "Liberty Cap Ride", "Red Bull Road Rage", "Watchman Trail",
+      "Burnt Rubber", "Understeer", "Hoola Loop", "Hospital Trail",
+      "V-Loop", "The Swell", "Red Bull Hardline", "Lost in Sequoia",
+      "Floor by Floor", "Xing", "Arrow Run", "Fox Racing Mtn. Rush",
+      "Ford Foot Out"
+    ]
+  },
+  snow: {
+    points: [
+      "Mammoth Can Jump", "Taco'd", "King Size", "Red Bull Ultra Natural",
+      "The Bowl", "Wolfpack", "The Trunk", "Eagles Are Flying",
+      "Snake Run", "Burton Grove", "Down of Teton", "Bliss",
+      "Dude, Yu OK?", "The Tusks", "Ice Rider", "Blind Test",
+      "Red Bull Linecatcher", "Log Rider", "Crest in Peace", "Paint Scratch",
+      "Left Side", "Hold My Bear", "Ridge TV Option 7", "Trees Don't Move",
+      "Tricks Derby", "Sideways", "The Village", "Red Bull Play Streets",
+      "Snow Whisperer", "Timber", "Invasion", "X-Games",
+      "Spine In The Dark", "Rossignol Man Vs Wild", "Red Bull Park Sessions", "Salomon Masterclass"
+    ],
+    time: [
+      "Dreamline", "Spring Diet", "Pathfinder", "Red Bull Homerun",
+      "Hold Your Breath", "Backbone", "Ice Edge", "8 Ball",
+      "Ridge TV Multiball", "Killing Moon", "Dirty Hairy", "Bears On The Heels",
+      "Ridge TV Snow Rush", "In Between The Line", "Trees To One Go!", "Rossignol Feel The Powder",
+      "Back On Track", "For Real", "Elbow To Elbow", "Salomon All In One"
+    ]
+  },
+  air: {
+    points: [
+      "More'o Rocky", "Marble Fly", "Look At The Whole", "Narrow Canyon",
+      "Ridge TV Wall of Windows", "Break Point", "Frozen Wings", "Hoodoo You Do ?",
+      "Half Dome Kisses", "Fog This!", "Ridge TV Night Wing", "Thermal Shock",
+      "Underline", "Canyon Flight", "Last Subway", "Ford The Dive"
+    ],
+    time: [
+      "Ridge TV The Dragonfly", "King Run", "In Between The Domes", "Hot Wings",
+      "Migration", "Stream Rocket", "Rocket Congress", "Ridge TV Angels Flight",
+      "8 Shape", "Dine and Dash", "Rocky Road", "Night Bird",
+      "Canyon Loop", "Broken Wing", "Sunburn", "The Crest",
+      "0 Faults", "Red Bull Aces"
+    ]
+  }
 };
 
     // Remplace la partie des chips par :
     document.getElementById('disciplineChips').innerHTML = `
       <button class="chip is-active" data-value="all">Tous</button>
       <button class="chip" data-value="bike">Vélo</button>
-      <button class="chip" data-value="ski/snow">Ski/Snow</button>
+      <button class="chip" data-value="snow">Snow</button>
       <button class="chip" data-value="air">Air</button>
-      <button class="chip" data-value="bmx">BMX</button>
-      <button class="chip" data-value="skate">Skate</button>
-      <button class="chip" data-value="autres">Autres</button>
     `;
 
     // Ajoute les événements aux nouvelles chips
