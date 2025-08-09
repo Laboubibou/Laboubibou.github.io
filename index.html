@@ -284,6 +284,50 @@
       cursor: not-allowed;
     }
 
+    /* --- Nouveaux styles pour la disposition des filtres --- */
+    .filter-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .filter-column {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .tab.is-active {
+      background: var(--brand);
+      color: #111;
+      border-color: transparent;
+    }
+
+    @media (max-width: 640px) {
+      .filter-columns {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -309,7 +353,7 @@
       <div class="subtitle">Filtre par discipline, épreuve, plateforme ou recherche de joueur.</div>
 
       <div class="filters">
-        <!-- 1. D'abord les chips de discipline -->
+        <!-- Chips de discipline -->
         <div class="chip-group" id="disciplineChips">
           <button class="chip is-active" data-value="all">Tous</button>
           <button class="chip" data-value="bike">Vélo</button>
@@ -317,18 +361,24 @@
           <button class="chip" data-value="air">Air</button>
         </div>
 
-        <!-- 2. Ensuite les tabs Points/Chronos -->
-        <div class="tabs" id="modeTabs">
-          <button class="tab is-active" data-mode="points">Points</button>
-          <button class="tab" data-mode="time">Chronos</button>
-        </div>
+        <!-- Nouvelle disposition en colonnes -->
+        <div class="filter-columns">
+          <!-- Colonne de gauche : Points/Chronos -->
+          <div class="filter-column">
+            <label>Type de record</label>
+            <div class="tabs" id="modeTabs">
+              <button class="tab is-active" data-mode="points">Points</button>
+              <button class="tab" data-mode="time">Chronos</button>
+            </div>
+          </div>
 
-        <!-- 3. Enfin le select des épreuves -->
-        <div class="field">
-          <label>Épreuve</label>
-          <select class="select" id="eventSelect">
-            <option value="all">Choisir d'abord une discipline</option>
-          </select>
+          <!-- Colonne de droite : Épreuves -->
+          <div class="filter-column">
+            <label>Épreuve</label>
+            <select class="select" id="eventSelect">
+              <option value="all">Choisir d'abord une discipline</option>
+            </select>
+          </div>
         </div>
       </div>
     </section>
