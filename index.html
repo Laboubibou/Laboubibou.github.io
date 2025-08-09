@@ -1063,14 +1063,28 @@ document.getElementById('submitForm').onsubmit = function(e) {
         }
     }
 
-    // Gestion de la déconnexion
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('user');
-        window.location.href = 'auth.html';
+    // Remplacer la vérification de connexion existante par celle-ci
+document.addEventListener('DOMContentLoaded', () => {
+    // Vérifier l'authentification Firebase au lieu du localStorage
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user && !window.location.href.includes('auth.html')) {
+            // Rediriger vers auth.html seulement si on n'y est pas déjà
+            window.location.replace('auth.html');
+        }
+    });
+});
+
+    // Gestionnaire de déconnexion
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try {
+            await firebase.auth().signOut();
+            localStorage.removeItem('user');
+            window.location.replace('auth.html');
+        } catch (error) {
+            console.error('Erreur de déconnexion:', error);
+        }
     });
 
-    // Vérifie l'état de connexion au chargement
-    document.addEventListener('DOMContentLoaded', checkAuthState);
 
     document.getElementById('userAvatar').addEventListener('click', () => {
     const logoutBtn = document.getElementById('logoutBtn');

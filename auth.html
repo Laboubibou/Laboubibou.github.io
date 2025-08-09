@@ -186,25 +186,28 @@
             error.style.display = 'block';
         }
 
-        // Login form handler
+        // Remplacer la vérification existante par celle-ci
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user && window.location.href.includes('auth.html')) {
+                // Rediriger vers index.html seulement si on est sur auth.html
+                window.location.replace('index.html');
+            }
+        });
+
+        // Modifier les handlers de connexion/inscription
         document.getElementById('loginFormElement').onsubmit = async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
             try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                localStorage.setItem('user', JSON.stringify(userCredential.user));
-                // Vérification que l'utilisateur est bien connecté avant la redirection
-                if (userCredential.user) {
-                    window.location.replace('index.html');
-                }
+                await firebase.auth().signInWithEmailAndPassword(email, password);
+                // La redirection sera gérée par onAuthStateChanged
             } catch (error) {
                 showError(error.message);
             }
         };
 
-        // Register form handler
         document.getElementById('registerFormElement').onsubmit = async (e) => {
             e.preventDefault();
             const email = document.getElementById('registerEmail').value;
@@ -212,25 +215,15 @@
             const username = document.getElementById('registerUsername').value;
 
             try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
                 await userCredential.user.updateProfile({
                     displayName: username
                 });
-                localStorage.setItem('user', JSON.stringify(userCredential.user));
-                if (userCredential.user) {
-                    window.location.replace('index.html');
-                }
+                // La redirection sera gérée par onAuthStateChanged
             } catch (error) {
                 showError(error.message);
             }
         };
-
-        // Check if user is already logged in
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                window.location.href = 'index.html';
-            }
-        });
     </script>
 </body>
 </html>
