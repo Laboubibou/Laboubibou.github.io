@@ -417,6 +417,15 @@
       }
     }
   </style>
+  <style>
+  #disciplineChips {
+    display: flex;              /* assure l'alignement en ligne */
+    justify-content: flex-start; /* colle les boutons à gauche */
+    margin-left: 0;              /* enlève marge gauche éventuelle */
+    padding-left: 0;             /* enlève padding gauche éventuel */
+  }
+</style>
+
 </head>
 <body>
   <header class="header">
@@ -511,44 +520,6 @@
 
   <div id="submitModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;">
     <div style="background:#15181b;color:#e8ecef;padding:32px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0, 0, 0, .35);width:90%;max-width:420px;position:relative;">
-      <button id="closeSubmit" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;">&times;</button>
-      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:18px;">Soumettre une run</h2>
-      <form id="submitForm">
-        <label>Joueur</label>
-        <input type="text" name="player" required placeholder="Nom du joueur" />
-        <label>Discipline</label>
-        <select name="discipline" required>
-          <option value="">Choisir</option>
-          <option value="bike">Vélo</option>
-          <option value="ski/snow">Ski/Snow</option>
-          <option value="air">Air</option>
-          <option value="bmx">BMX</option>
-          <option value="skate">Skate</option>
-          <option value="autres">Autres</option>
-        </select>
-        <label>Épreuve</label>
-        <input type="text" name="event" required placeholder="Nom de l'épreuve" />
-        <label>Plateforme</label>
-        <select name="platform" required>
-          <option value="">Choisir</option>
-          <option value="PC">PC</option>
-          <option value="PlayStation">PlayStation</option>
-          <option value="Xbox">Xbox</option>
-        </select>
-        <label>Type</label>
-        <select name="type" required>
-          <option value="score">Score</option>
-          <option value="time">Temps</option>
-        </select>
-        <label>Valeur (score ou temps en ms)</label>
-        <input type="number" name="value" required placeholder="Ex: 123456" />
-        <label>Lien vidéo (preuve)</label>
-        <input type="url" name="proof_url" placeholder="https://..." />
-        <button type="submit" style="width:100%;padding:12px 0;border-radius:8px;background:#f1ff00;color:#111;font-weight:700;font-size:1rem;border:none;cursor:pointer;margin-top:16px;">Envoyer</button>
-      </form>
-    </div>
-  </div>
-
   <script>
     // --- Import automatique depuis Google Sheets ---
     let sample = [];
