@@ -460,6 +460,48 @@
   font-size: 24px;
   cursor: pointer;
 }
+
+    .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px;
+        border-radius: 8px;
+        background: var(--surface);
+        margin-left: auto;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    #userName {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .logout-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        background: rgba(255,255,255,.1);
+        border: none;
+        color: var(--text);
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .logout-btn:hover {
+        background: rgba(255,255,255,.2);
+    }
   </style>
 </head>
 <body>
@@ -476,6 +518,14 @@
         <a class="btn" href="/auth">Se connecter</a>
         <a class="btn btn--brand" href="submit.html" id="addRunBtn">+ Soumettre une run</a>
       </div>
+    </div>
+
+    <div class="user-menu" id="userMenu">
+        <div class="user-info">
+            <span id="userName">Non connecté</span>
+            <img src="user.png" alt="Avatar" class="user-avatar" id="userAvatar">
+        </div>
+        <button id="logoutBtn" class="logout-btn" style="display: none;">Déconnexion</button>
     </div>
   </header>
 
@@ -1000,6 +1050,30 @@ document.getElementById('submitForm').onsubmit = function(e) {
         state.event = this.value;
         update();
     });
+
+    // Gestion de l'état de connexion
+    function checkAuthState() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userName = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        if (user) {
+            userName.textContent = user.displayName || user.email;
+            logoutBtn.style.display = 'block';
+        } else {
+            userName.textContent = 'Non connecté';
+            logoutBtn.style.display = 'none';
+        }
+    }
+
+    // Gestion de la déconnexion
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('user');
+        window.location.href = 'auth.html';
+    });
+
+    // Vérifie l'état de connexion au chargement
+    document.addEventListener('DOMContentLoaded', checkAuthState);
   </script>
 </body>
 </html>
