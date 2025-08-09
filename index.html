@@ -81,6 +81,24 @@
     .field label { font-size: 13px; color: var(--muted); }
     .select, .input { width: 100%; padding: 12px 14px; border-radius: 12px; background: var(--surface); color: var(--text); border: 1px solid rgba(255,255,255,.08); outline: none; }
 
+    .tabs {
+      margin: 16px 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .tabs[style*="opacity: 0.5"] {
+      cursor: not-allowed;
+    }
+
+    #eventSelect {
+      transition: opacity 0.3s ease;
+    }
+
+    #eventSelect[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     .tabs { margin-top: 12px; display: inline-flex; background: var(--surface); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; }
     .tab { padding: 10px 14px; cursor: pointer; font-weight: 700; color: var(--muted); }
     .tab.is-active { background: var(--brand); color: #111; }
@@ -287,25 +305,31 @@
 
   <main class="container">
     <section class="hero">
-      <h1 class="title">Classements Points & Chronos</h1>
+      <h1 class="title">Classements officieux Points & Chronos</h1>
       <div class="subtitle">Filtre par discipline, épreuve, plateforme ou recherche de joueur.</div>
 
       <div class="filters">
+        <!-- 1. D'abord les chips de discipline -->
         <div class="chip-group" id="disciplineChips">
-          <!-- Les chips seront injectées ici par JS -->
+          <button class="chip is-active" data-value="all">Tous</button>
+          <button class="chip" data-value="bike">Vélo</button>
+          <button class="chip" data-value="snow">Snow</button>
+          <button class="chip" data-value="air">Air</button>
         </div>
 
+        <!-- 2. Ensuite les tabs Points/Chronos -->
+        <div class="tabs" id="modeTabs">
+          <button class="tab is-active" data-mode="points">Points</button>
+          <button class="tab" data-mode="time">Chronos</button>
+        </div>
+
+        <!-- 3. Enfin le select des épreuves -->
         <div class="field">
           <label>Épreuve</label>
           <select class="select" id="eventSelect">
-            <option value="all">Toutes les épreuves</option>
+            <option value="all">Choisir d'abord une discipline</option>
           </select>
         </div>
-      </div>
-
-      <div class="tabs" id="modeTabs">
-        <button class="tab is-active" data-mode="points">Points</button>
-        <button class="tab" data-mode="time">Chronos</button>
       </div>
     </section>
 
@@ -413,13 +437,11 @@
         update();
       });
 
-    // État global
+    // État initial
 const state = {
   discipline: 'all',
   mode: 'points',
-  event: 'all',
-  search: '',
-  sort: { key: 'rank', dir: 'asc' }
+  event: 'all'
 };
 
     const rowsEl = document.getElementById('rows');
@@ -508,52 +530,62 @@ const state = {
     }
 
     // Interactions
-    document.getElementById('disciplineChips').addEventListener('click', function(e) {
-      if (!e.target.classList.contains('chip')) return;
-      
-      // Met à jour les chips actifs
-      document.querySelectorAll('#disciplineChips .chip').forEach(c => c.classList.remove('is-active'));
-      e.target.classList.add('is-active');
-      
-      // Récupère la discipline sélectionnée
-      const discipline = e.target.dataset.value;
-      state.discipline = discipline;
-      
-      // Met à jour la liste des épreuves selon le mode actuel (points/time)
-      updateEventsList(discipline, state.mode);
-      
-      update();
-    });
+    document.getElementById('disciplineChips').addEventListener('click', e => {
+  if (!e.target.classList.contains('chip')) return;
 
-    function updateEventsList(discipline, mode) {
-    const eventSelect = document.getElementById('eventSelect');
-    eventSelect.innerHTML = '<option value="all">Toutes les épreuves</option>';
-    
-    if (discipline !== 'all' && eventsByDiscipline[discipline]) {
-        const events = eventsByDiscipline[discipline][mode] || [];
-        
-        events.forEach(event => {
-            const option = document.createElement('option');
-            option.value = event;
-            option.textContent = event;
-            eventSelect.appendChild(option);
-        });
-    }
-}
+  document.querySelectorAll('#disciplineChips .chip').forEach(c => c.classList.remove('is-active'));
+  e.target.classList.add('is-active');
 
-    document.getElementById('modeTabs').addEventListener('click', (e) => {
-    if (!e.target.classList.contains('tab')) return;
-    
-    document.querySelectorAll('#modeTabs .tab').forEach(t => t.classList.remove('is-active'));
-    e.target.classList.add('is-active');
-    
-    state.mode = e.target.dataset.mode;
-    
-    // Met à jour la liste des épreuves quand on change de mode
+  state.discipline = e.target.dataset.value;
+  state.event = 'all';
+
+  // Active/désactive les tabs Points/Chronos
+  const modeTabs = document.getElementById('modeTabs');
+  if (state.discipline === 'all') {
+    modeTabs.style.opacity = '0.5';
+    modeTabs.style.pointerEvents = 'none';
+    document.getElementById('eventSelect').innerHTML = '<option value="all">Choisir d\'abord une discipline</option>';
+  } else {
+    modeTabs.style.opacity = '1';
+    modeTabs.style.pointerEvents = 'auto';
     updateEventsList(state.discipline, state.mode);
-    
-    update();
+  }
+
+  update();
 });
+
+    // Gestion des tabs Points/Chronos
+    document.getElementById('modeTabs').addEventListener('click', e => {
+  if (!e.target.classList.contains('tab')) return;
+
+  document.querySelectorAll('#modeTabs .tab').forEach(t => t.classList.remove('is-active'));
+  e.target.classList.add('is-active');
+
+  state.mode = e.target.dataset.mode;
+  state.event = 'all';
+
+  if (state.discipline !== 'all') {
+    updateEventsList(state.discipline, state.mode);
+  }
+
+  update();
+});
+
+    // Mise à jour de la liste des épreuves
+    function updateEventsList(discipline, mode) {
+  const eventSelect = document.getElementById('eventSelect');
+  eventSelect.innerHTML = '<option value="all">Choisir une épreuve</option>';
+
+  if (discipline !== 'all' && eventsByDiscipline[discipline]) {
+    const events = eventsByDiscipline[discipline][mode] || [];
+    events.forEach(ev => {
+      const option = document.createElement('option');
+      option.value = ev;
+      option.textContent = ev;
+      eventSelect.appendChild(option);
+    });
+  }
+}
 
     document.getElementById('searchInput').addEventListener('input', e => { state.search = e.target.value; update(); });
     document.getElementById('clearSearch').addEventListener('click', () => { document.getElementById('searchInput').value=''; state.search=''; update(); });
@@ -635,7 +667,7 @@ const state = {
       "The Freezer", "Red Bull Rampage", "Red Bull Rampage 2017"
     ],
     time: [
-      "Welcome to Riders'", "The Giants", "Red Bull Holy Bike", "Urban Freestyle",
+      "Welcome to Riders", "The Giants", "Red Bull Holy Bike", "Urban Freestyle",
       "Diving Board", "Skrrt Skrrt", "Ridge TV Luckt Straight", "Santa Cruz Urban Ride",
       "Don't Look Down", "Frontier", "Sentinel Path", "A Nice Day Out…",
       "The Fissure Loop", "Liberty Cap Ride", "Red Bull Road Rage", "Watchman Trail",
