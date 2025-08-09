@@ -14,8 +14,8 @@
       --surface-2: #1a1f23;
       --text: #e8ecef;
       --muted: #a7b0b7;
-      --brand: #f1ff00; /* neon yellow */
-      --accent: #21c9b6; /* teal */
+      --brand: #f1ff00;
+      --accent: #21c9b6;
       --danger: #ff5a5f;
       --gold: #f6c90e;
       --silver: #c0c7d1;
@@ -34,7 +34,6 @@
     }
     a { color: inherit; text-decoration: none; }
 
-    /* Header */
     .header {
       position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px);
       background: linear-gradient(180deg, rgba(13,15,16,.85), rgba(13,15,16,.55));
@@ -45,7 +44,7 @@
     .brand {
       display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: .3px;
     }
-    .brand-badge { width: 36px; height: 36px; border-radius: 10px; background: var(--brand); color: #111; display: grid; place-items: center; font-weight: 900; box-shadow: var(--shadow); }
+    .brand-badge { width: 36px; height: 36px; border-radius: 10px; background: var(--brand); color: #111; display: grid; place-items: center; font-weight: 900; box-shadow: var(--shadow); object-fit: cover; }
     .nav-cta { display: flex; gap: 10px; align-items: center; }
     .btn {
       display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08);
@@ -55,7 +54,6 @@
     .btn--brand { background: var(--brand); color: #0d0f10; border-color: rgba(0,0,0,.1); }
     .btn--brand:hover { filter: brightness(.98); }
 
-    /* Hero / filters */
     .hero { padding: 24px 0 6px; }
     .title { font-family: 'Bebas Neue', sans-serif; letter-spacing: .5px; font-size: clamp(30px, 5vw, 52px); line-height: 1; margin: 2px 0 14px; }
     .subtitle { color: var(--muted); margin-bottom: 22px; }
@@ -75,7 +73,6 @@
     .tab { padding: 10px 14px; cursor: pointer; font-weight: 700; color: var(--muted); }
     .tab.is-active { background: var(--brand); color: #111; }
 
-    /* Podium */
     .podium { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; margin: 20px 0; }
     .podium-card {
       grid-column: span 4; background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1px solid rgba(255,255,255,.08);
@@ -90,7 +87,6 @@
     .score { font-size: 22px; font-weight: 800; margin-top: 6px; }
     .meta { font-size: 12px; color: var(--muted); }
 
-    /* Table */
     .card { background: linear-gradient(180deg, var(--surface), rgba(26,31,35,.8)); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
     .table-head { display: grid; grid-template-columns: 60px 1.3fr 0.8fr 1fr 0.8fr 0.8fr 0.8fr; gap: 12px; padding: 14px 16px; background: rgba(255,255,255,.03); border-bottom: 1px solid rgba(255,255,255,.06); position: sticky; top: 64px; z-index: 5; }
     .th { color: var(--muted); font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
@@ -104,7 +100,6 @@
     .search { flex: 1; display: flex; gap: 8px; }
     .search input { flex: 1; }
 
-    /* Responsive */
     @media (max-width: 900px) {
       .table-head, .row { grid-template-columns: 50px 1.2fr 1fr 1fr 0.8fr 0.8fr; }
       .hide-md { display: none; }
@@ -122,7 +117,7 @@
   <header class="header">
     <div class="container nav">
       <div class="brand">
-        <div class="brand-badge">RR</div>
+        <img src="logo.png" alt="Riders Republic Logo" class="brand-badge" style="object-fit:cover;" />
         <div>
           <div style="font-weight:900;">Riders Republic</div>
           <div style="font-size:12px;color:var(--muted);margin-top:-2px;">Classements communautaires</div>
@@ -130,23 +125,25 @@
       </div>
       <div class="nav-cta">
         <a class="btn" href="/auth">Admin / Auth</a>
-        <a class="btn btn--brand" href="#" id="addRunBtn">+ Soumettre un run</a>
+        <a class="btn btn--brand" href="#" id="addRunBtn">+ Soumettre une run</a>
       </div>
     </div>
   </header>
 
   <main class="container">
     <section class="hero">
-      <h1 class="title">Classements officieux Points & Chronos</h1>
+      <h1 class="title">Classements Points & Chronos</h1>
       <div class="subtitle">Filtre par discipline, épreuve, plateforme ou recherche de joueur.</div>
 
       <div class="filters">
         <div class="chip-group" id="disciplineChips">
           <button class="chip is-active" data-value="all">Tous</button>
           <button class="chip" data-value="bike">Vélo</button>
-          <button class="chip" data-value="snow">Neige</button>
-          <button class="chip" data-value="wingsuit">Wingsuit</button>
-          <button class="chip" data-value="rocket">Rocket Wings</button>
+          <button class="chip" data-value="ski/snow">Ski/Snow</button>
+          <button class="chip" data-value="air">Air</button>
+          <button class="chip" data-value="bmx">BMX</button>
+          <button class="chip" data-value="skate">Skate</button>
+          <button class="chip" data-value="autres">Autres</button>
         </div>
 
         <div class="field">
@@ -206,19 +203,25 @@
   </main>
 
   <script>
-    // --- Mock data (remplaçable par /api/leaderboard) ---
-    const sample = [
-      { rank: 1, player: 'NovaRider', platform: 'PC', event: 'Urban Freestyle', discipline: 'bike', mode: 'points', score: 98450, timeMs: null, date: '2025-06-28' },
-      { rank: 2, player: 'Shiro', platform: 'PlayStation', event: 'Urban Freestyle', discipline: 'bike', mode: 'points', score: 96120, timeMs: null, date: '2025-06-21' },
-      { rank: 3, player: 'Lynx', platform: 'Xbox', event: 'Urban Freestyle', discipline: 'bike', mode: 'points', score: 94410, timeMs: null, date: '2025-06-20' },
-      { rank: 4, player: 'PeakFox', platform: 'PC', event: 'Big Air Park', discipline: 'snow', mode: 'points', score: 91040, timeMs: null, date: '2025-06-26' },
-      { rank: 5, player: 'Sage', platform: 'PC', event: 'Big Air Park', discipline: 'snow', mode: 'points', score: 89120, timeMs: null, date: '2025-06-25' },
-      { rank: 1, player: 'NovaRider', platform: 'PC', event: 'Redwood Sprint', discipline: 'bike', mode: 'time', score: null, timeMs: 112340, date: '2025-06-22' },
-      { rank: 2, player: 'Shiro', platform: 'PlayStation', event: 'Redwood Sprint', discipline: 'bike', mode: 'time', score: null, timeMs: 113280, date: '2025-06-24' },
-      { rank: 3, player: 'Lynx', platform: 'Xbox', event: 'Redwood Sprint', discipline: 'bike', mode: 'time', score: null, timeMs: 113990, date: '2025-06-26' },
-      { rank: 4, player: 'PeakFox', platform: 'PC', event: 'Glacier Descent', discipline: 'wingsuit', mode: 'time', score: null, timeMs: 124200, date: '2025-06-20' },
-      { rank: 5, player: 'Sage', platform: 'PC', event: 'Glacier Descent', discipline: 'wingsuit', mode: 'time', score: null, timeMs: 127400, date: '2025-06-18' },
-    ];
+    // --- Import automatique depuis Google Sheets ---
+    let sample = [];
+
+    fetch("https://api.sheetbest.com/sheets/c4d0a049-562b-4a08-9b1c-60631fcff8cf")
+      .then(res => res.json())
+      .then(data => {
+        sample = data.map((r, i) => ({
+          rank: Number(r.rank) || i + 1,
+          player: r.participant || r.player || "",
+          platform: r.platform || "",
+          event: r.event || "",
+          discipline: r.category || r.discipline || "",
+          mode: r.type === "score" ? "points" : "time",
+          score: r.value && r.type === "score" ? Number(r.value) : null,
+          timeMs: r.value && r.type === "time" ? Number(r.value) : null,
+          date: r.date || "",
+        }));
+        update();
+      });
 
     const state = {
       mode: 'points',
@@ -232,8 +235,9 @@
     const rowsEl = document.getElementById('rows');
     const podiumEl = document.getElementById('podium');
 
-    function formatNumber(n) { return n.toLocaleString('fr-FR'); }
+    function formatNumber(n) { return n ? n.toLocaleString('fr-FR') : '-'; }
     function formatTime(ms) {
+      if (!ms) return '-';
       const totalSeconds = Math.floor(ms / 1000);
       const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
       const seconds = (totalSeconds % 60).toString().padStart(2, '0');
@@ -279,7 +283,7 @@
             </div>
           </div>
           <div class="score">${state.mode==='points' ? formatNumber(r.score) + ' pts' : formatTime(r.timeMs)}</div>
-          <div class="meta">${new Date(r.date).toLocaleDateString('fr-FR')}</div>
+          <div class="meta">${r.date ? new Date(r.date).toLocaleDateString('fr-FR') : ''}</div>
         </div>
       `).join('');
     }
@@ -299,7 +303,7 @@
           <div>${r.event}</div>
           <div>${state.mode==='points' ? formatNumber(r.score) : '-'}</div>
           <div>${state.mode==='time' ? formatTime(r.timeMs) : '-'}</div>
-          <div class="hide-md">${new Date(r.date).toLocaleDateString('fr-FR')}</div>
+          <div class="hide-md">${r.date ? new Date(r.date).toLocaleDateString('fr-FR') : ''}</div>
         </div>
       `).join('');
     }
@@ -330,7 +334,6 @@
       document.querySelectorAll('#modeTabs .tab').forEach(t => t.classList.remove('is-active'));
       e.target.classList.add('is-active');
       state.mode = e.target.dataset.mode;
-      // Adjust default sort
       state.sort = state.mode === 'points' ? { key: 'score', dir: 'desc' } : { key: 'timeMs', dir: 'asc' };
       update();
     });
@@ -366,9 +369,8 @@
       const a = document.createElement('a'); a.href=url; a.download='classement_rr.csv'; a.click(); URL.revokeObjectURL(url);
     });
 
-    // Initial mode sort preference
     state.sort = { key: 'score', dir: 'desc' };
-    update();
+    // update(); // plus besoin, sera appelé après fetch
   </script>
 </body>
 </html>
