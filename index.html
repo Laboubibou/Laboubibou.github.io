@@ -276,21 +276,14 @@
         <div class="chip-group" id="disciplineChips">
           <button class="chip is-active" data-value="all">Tous</button>
           <button class="chip" data-value="bike">Vélo</button>
-          <button class="chip" data-value="ski/snow">Ski/Snow</button>
+          <button class="chip" data-value="snow">Snow</button>
           <button class="chip" data-value="air">Air</button>
-          <button class="chip" data-value="bmx">BMX</button>
-          <button class="chip" data-value="skate">Skate</button>
-          <button class="chip" data-value="autres">Autres</button>
         </div>
 
         <div class="field">
           <label>Épreuve</label>
           <select class="select" id="eventSelect">
-            <option value="all">Toutes</option>
-            <option>Urban Freestyle</option>
-            <option>Big Air Park</option>
-            <option>Redwood Sprint</option>
-            <option>Glacier Descent</option>
+            <option value="all">Toutes les épreuves</option>
           </select>
         </div>
         <div class="field">
@@ -596,6 +589,94 @@
 
     state.sort = { key: 'score', dir: 'desc' };
     // update(); // plus besoin, sera appelé après fetch
+
+    // Dans la partie <script>, ajoute cette constante avec toutes les courses :
+    const eventsByDiscipline = {
+        "bike": [
+            "Welcome to Riders", "The Giants", "Red Bull Holy Bike", "Don't Look Down", 
+            "Diving Board", "Frontier", "Skrrt Skrrt", "Ridge TV Lucky Straight",
+            "Sentinel Path", "A Nice Day Out…", "The Fissure Loop", "Liberty Cap Ride",
+            "Red Bull Road Rage", "Watchman Trail", "Burnt Rubber", "Understeer",
+            "Hoola Loop", "Santa Cruz Urban Ride", "Hospital Trail", "V-Loop",
+            "The Swell", "Red Bull Hardline", "Lost in Sequoia", "Floor by Floor",
+            "Xing", "Arrow Run", "Fox Racing Mtn. Rush", "Ford Foot Out"
+        ],
+        "snow": [
+            "Dreamline", "Spring Diet", "Pathfinder", "Red Bull Homerun",
+            "Hold Your Breath", "Backbone", "Ice Edge", "8 Ball",
+            "Ridge TV Multiball", "Killing Moon", "Dirty Hairy",
+            "Bears On The Heels", "Ridge TV Snow Rush", "In Between The Line",
+            "Trees To One Go!", "Rossignol Feel The Powder", "Back On Track",
+            "For Real", "Elbow To Elbow", "Salomon All In One"
+        ],
+        "air": [
+            "Ridge TV The Dragonfly", "King Run", "In Between The Domes",
+            "Hot Wings", "Migration", "Stream Rocket", "Rocket Congress",
+            "Ridge TV Angels Flight", "8 Shape", "Dine and Dash", "Rocky Road",
+            "Night Bird", "Canyon Loop", "Broken Wing", "Sunburn",
+            "The Crest", "0 Faults", "Red Bull Aces"
+        ]
+    };
+
+    // Remplace la partie des chips par :
+    document.getElementById('disciplineChips').innerHTML = `
+      <button class="chip is-active" data-value="all">Tous</button>
+      <button class="chip" data-value="bike">Vélo</button>
+      <button class="chip" data-value="ski/snow">Ski/Snow</button>
+      <button class="chip" data-value="air">Air</button>
+      <button class="chip" data-value="bmx">BMX</button>
+      <button class="chip" data-value="skate">Skate</button>
+      <button class="chip" data-value="autres">Autres</button>
+    `;
+
+    // Ajoute les événements aux nouvelles chips
+    document.querySelectorAll('#disciplineChips .chip').forEach(c => {
+      c.addEventListener('click', (e) => {
+        document.querySelectorAll('#disciplineChips .chip').forEach(c => c.classList.remove('is-active'));
+        e.target.classList.add('is-active');
+        state.discipline = e.target.dataset.value;
+        // Remplit le sélecteur d'épreuves en fonction de la discipline
+        const events = eventsByDiscipline[state.discipline] || [];
+        const eventSelect = document.getElementById('eventSelect');
+        eventSelect.innerHTML = `<option value="all">Toutes</option>` + events.map(ev => `<option>${ev}</option>`).join('');
+        state.event = 'all'; // Réinitialise l'épreuve
+        update();
+      });
+    });
+
+    // Ajoute ce code dans la partie <script> pour gérer la sélection des courses :
+    document.getElementById('disciplineChips').addEventListener('click', function(e) {
+        if (!e.target.classList.contains('chip')) return;
+        
+        // Met à jour les chips actifs
+        document.querySelectorAll('#disciplineChips .chip').forEach(c => c.classList.remove('is-active'));
+        e.target.classList.add('is-active');
+        
+        // Récupère la discipline sélectionnée
+        const discipline = e.target.dataset.value;
+        state.discipline = discipline;
+        
+        // Met à jour la liste des épreuves
+        const eventSelect = document.getElementById('eventSelect');
+        eventSelect.innerHTML = '<option value="all">Toutes les épreuves</option>';
+        
+        if (discipline !== 'all' && eventsByDiscipline[discipline]) {
+            eventsByDiscipline[discipline].forEach(event => {
+                const option = document.createElement('option');
+                option.value = event;
+                option.textContent = event;
+                eventSelect.appendChild(option);
+            });
+        }
+        
+        update();
+    });
+
+    // Mise à jour quand une épreuve est sélectionnée
+    document.getElementById('eventSelect').addEventListener('change', function() {
+        state.event = this.value;
+        update();
+    });
   </script>
 </body>
 </html>
