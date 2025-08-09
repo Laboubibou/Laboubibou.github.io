@@ -1,235 +1,295 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Soumettre une run - Riders Republic</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      background: #0d0f10;
-      color: #e8ecef;
-      font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      padding: 24px 0 0 0;
-      text-align: center;
-    }
-    .logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 10px;
-      object-fit: cover;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-      margin-bottom: 8px;
-    }
-    h1 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.5rem;
-      margin: 0 0 12px 0;
-      letter-spacing: 1px;
-    }
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100vw;
-    }
-    .form-card {
-      background: #15181b;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-      padding: 40px 32px 32px 32px;
-      width: 100%;
-      max-width: 440px;
-      margin: 32px 0;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #a7b0b7;
-    }
-    input, select {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid #222;
-      background: #222;
-      color: #fff;
-      margin-bottom: 18px;
-      font-size: 1rem;
-    }
-    .time-fields {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 18px;
-      justify-content: space-between;
-    }
-    .time-fields input {
-      width: 100%;
-      text-align: center;
-      font-size: 1.3rem;
-      font-weight: bold;
-      padding: 18px 0;
-      margin-bottom: 0;
-    }
-    .time-labels {
-      display: flex;
-      gap: 10px;
-      justify-content: space-between;
-      margin-bottom: 18px;
-    }
-    .time-labels span {
-      width: 100%;
-      text-align: center;
-      font-size: 1.1rem;
-      color: #f1ff00;
-      font-family: 'Bebas Neue', sans-serif;
-      letter-spacing: 1px;
-    }
-    button[type="submit"] {
-      width: 100%;
-      padding: 14px 0;
-      border-radius: 10px;
-      background: #f1ff00;
-      color: #111;
-      font-weight: 700;
-      font-size: 1.1rem;
-      border: none;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .back-link {
-      display: block;
-      margin: 0 auto 24px auto;
-      color: #21c9b6;
-      text-align: center;
-      text-decoration: underline;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    .player-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 18px;
-      color: #f1ff00;
-    }
-    @media (max-width: 600px) {
-      .form-card { padding: 24px 8px; }
-      main { align-items: flex-start; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumettre une Run - Riders Republic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f10;
+            --surface: #15181b;
+            --text: #e8ecef;
+            --brand: #f1ff00;
+            --accent: #21c9b6;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--brand);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid #333;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .time-container {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .time-container.visible {
+            display: grid;
+        }
+
+        .time-field {
+            text-align: center;
+        }
+
+        .time-field input {
+            text-align: center;
+            font-size: 1.5rem;
+            padding: 1rem;
+        }
+
+        .time-label {
+            font-size: 1.2rem;
+            color: var(--brand);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--brand);
+            border: none;
+            border-radius: 8px;
+            color: var(--bg);
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .player-info {
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <a href="index.html"><img src="logo.png" alt="Riders Republic Logo" class="logo" /></a>
-    <h1>Soumettre une run</h1>
-  </header>
-  <main>
-    <form class="form-card" id="submitForm">
-      <div class="player-name">Joueur : <span id="playerName">Non connecté</span></div>
-      <label>Discipline</label>
-      <select name="discipline" required>
-        <option value="">Choisir</option>
-        <option value="bike">Vélo</option>
-        <option value="ski/snow">Ski/Snow</option>
-        <option value="air">Air</option>
-        <option value="bmx">BMX</option>
-        <option value="skate">Skate</option>
-        <option value="autres">Autres</option>
-      </select>
-      <label>Épreuve</label>
-      <input type="text" name="event" required placeholder="Nom de l'épreuve" />
-      <label>Plateforme</label>
-      <select name="platform" required>
-        <option value="">Choisir</option>
-        <option value="PC">PC</option>
-        <option value="PlayStation">PlayStation</option>
-        <option value="Xbox">Xbox</option>
-      </select>
-      <label>Type</label>
-      <select name="type" id="typeSelect" required>
-        <option value="score">Score</option>
-        <option value="time">Temps</option>
-      </select>
-      <div id="scoreField">
-        <label>Score</label>
-        <input type="number" name="score" min="0" placeholder="Ex: 123456" />
-      </div>
-      <div id="timeFields" style="display:none;">
-        <div class="time-labels">
-          <span>h</span><span>m</span><span>s</span><span>ms</span>
-        </div>
-        <div class="time-fields">
-          <input type="number" name="hours" min="0" max="23" placeholder="0" />
-          <input type="number" name="minutes" min="0" max="59" placeholder="0" />
-          <input type="number" name="seconds" min="0" max="59" placeholder="0" />
-          <input type="number" name="milliseconds" min="0" max="999" placeholder="0" />
-        </div>
-      </div>
-      <label>Lien vidéo (preuve)</label>
-      <input type="url" name="proof_url" placeholder="https://..." />
-      <button type="submit">Envoyer</button>
-      <a href="index.html" class="back-link">← Retour au classement</a>
-    </form>
-  </main>
-  <script>
-    // Affichage dynamique score/temps
-    const typeSelect = document.getElementById('typeSelect');
-    const scoreField = document.getElementById('scoreField');
-    const timeFields = document.getElementById('timeFields');
-    typeSelect.onchange = function() {
-      if (this.value === 'time') {
-        scoreField.style.display = 'none';
-        timeFields.style.display = '';
-      } else {
-        scoreField.style.display = '';
-        timeFields.style.display = 'none';
-      }
-    };
+    <div class="container">
+        <header class="header">
+            <img src="logo.png" alt="Riders Republic" class="logo">
+            <h1>Soumettre une Run</h1>
+        </header>
 
-    // Simuler le nom du joueur (à remplacer par la vraie auth)
-    document.getElementById('playerName').textContent = "Non connecté";
+        <div class="player-info">
+            Connecté en tant que : <span id="playerName">Non connecté</span>
+        </div>
 
-    // Gestion du formulaire
-    document.getElementById('submitForm').onsubmit = function(e) {
-      e.preventDefault();
-      // Récupérer les données
-      const data = Object.fromEntries(new FormData(this));
-      let value = "";
-      if (data.type === "score") {
-        value = data.score;
-      } else {
-        // Convertir h/m/s/ms en ms
-        const h = parseInt(data.hours) || 0;
-        const m = parseInt(data.minutes) || 0;
-        const s = parseInt(data.seconds) || 0;
-        const ms = parseInt(data.milliseconds) || 0;
-        value = ((h*60*60 + m*60 + s)*1000 + ms).toString();
-      }
-      // Préparer l'objet à envoyer
-      const toSend = {
-        participant: document.getElementById('playerName').textContent,
-        category: data.discipline,
-        event: data.event,
-        platform: data.platform,
-        type: data.type,
-        value: value,
-        proof_url: data.proof_url
-      };
-      // Affichage de confirmation (remplace par un POST Sheet.best si besoin)
-      alert("Merci ! Votre run a bien été soumise :\n" + JSON.stringify(toSend, null, 2));
-      this.reset();
-      scoreField.style.display = '';
-      timeFields.style.display = 'none';
-    };
-  </script>
+        <form id="submitForm">
+            <div class="form-group">
+                <label>Discipline</label>
+                <select name="discipline" required id="disciplineSelect">
+                    <option value="">Choisir une discipline</option>
+                    <option value="bike">Vélo</option>
+                    <option value="snow">Snow</option>
+                    <option value="air">Air</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Épreuve</label>
+                <select name="event" required id="eventSelect">
+                    <option value="">Choisir d'abord une discipline</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Type de Record</label>
+                <select name="recordType" required id="recordType">
+                    <option value="score">Score</option>
+                    <option value="time">Temps</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="scoreInput">
+                <label>Score</label>
+                <input type="number" name="score" min="0">
+            </div>
+
+            <div class="time-container" id="timeContainer">
+                <div class="time-field">
+                    <div class="time-label">H</div>
+                    <input type="number" name="hours" min="0" max="23">
+                </div>
+                <div class="time-field">
+                    <div class="time-label">M</div>
+                    <input type="number" name="minutes" min="0" max="59">
+                </div>
+                <div class="time-field">
+                    <div class="time-label">S</div>
+                    <input type="number" name="seconds" min="0" max="59">
+                </div>
+                <div class="time-field">
+                    <div class="time-label">MS</div>
+                    <input type="number" name="milliseconds" min="0" max="999">
+                </div>
+            </div>
+
+            <button type="submit">Soumettre</button>
+        </form>
+
+        <a href="index.html" class="back-link">← Retour aux classements</a>
+    </div>
+
+    <script>
+        const events = {
+            bike: [
+                "Welcome to Riders", "The Giants", "Red Bull Holy Bike", "Don't Look Down", 
+                "Diving Board", "Frontier", "Skrrt Skrrt", "Ridge TV Lucky Straight",
+                "Sentinel Path", "A Nice Day Out…", "The Fissure Loop", "Liberty Cap Ride",
+                "Red Bull Road Rage", "Watchman Trail", "Burnt Rubber", "Understeer",
+                "Hoola Loop", "Santa Cruz Urban Ride", "Hospital Trail", "V-Loop",
+                "The Swell", "Red Bull Hardline", "Lost in Sequoia", "Floor by Floor",
+                "Xing", "Arrow Run", "Fox Racing Mtn. Rush", "Ford Foot Out"
+            ],
+            snow: [
+                "Dreamline", "Spring Diet", "Pathfinder", "Red Bull Homerun",
+                "Hold Your Breath", "Backbone", "Ice Edge", "8 Ball",
+                "Ridge TV Multiball", "Killing Moon", "Dirty Hairy",
+                "Bears On The Heels", "Ridge TV Snow Rush", "In Between The Line",
+                "Trees To One Go!", "Rossignol Feel The Powder", "Back On Track",
+                "For Real", "Elbow To Elbow", "Salomon All In One"
+            ],
+            air: [
+                "Ridge TV The Dragonfly", "King Run", "In Between The Domes",
+                "Hot Wings", "Migration", "Stream Rocket", "Rocket Congress",
+                "Ridge TV Angels Flight", "8 Shape", "Dine and Dash", "Rocky Road",
+                "Night Bird", "Canyon Loop", "Broken Wing", "Sunburn",
+                "The Crest", "0 Faults", "Red Bull Aces"
+            ]
+        };
+
+        // Mise à jour des épreuves selon la discipline
+        document.getElementById('disciplineSelect').addEventListener('change', function() {
+            const eventSelect = document.getElementById('eventSelect');
+            eventSelect.innerHTML = '<option value="">Choisir une épreuve</option>';
+            
+            if (this.value && events[this.value]) {
+                events[this.value].forEach(event => {
+                    const option = document.createElement('option');
+                    option.value = event;
+                    option.textContent = event;
+                    eventSelect.appendChild(option);
+                });
+            }
+        });
+
+        // Gestion de l'affichage score/temps
+        document.getElementById('recordType').addEventListener('change', function() {
+            const scoreInput = document.getElementById('scoreInput');
+            const timeContainer = document.getElementById('timeContainer');
+            
+            if (this.value === 'time') {
+                scoreInput.style.display = 'none';
+                timeContainer.classList.add('visible');
+            } else {
+                scoreInput.style.display = 'block';
+                timeContainer.classList.remove('visible');
+            }
+        });
+
+        // Soumission du formulaire
+        document.getElementById('submitForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                participant: document.getElementById('playerName').textContent,
+                discipline: formData.get('discipline'),
+                event: formData.get('event'),
+                type: formData.get('recordType')
+            };
+
+            if (data.type === 'score') {
+                data.value = formData.get('score');
+            } else {
+                // Convertir h/m/s/ms en millisecondes
+                const h = parseInt(formData.get('hours')) || 0;
+                const m = parseInt(formData.get('minutes')) || 0;
+                const s = parseInt(formData.get('seconds')) || 0;
+                const ms = parseInt(formData.get('milliseconds')) || 0;
+                data.value = ((h * 3600 + m * 60 + s) * 1000 + ms).toString();
+            }
+
+            // Envoi vers Sheet.best
+            fetch('https://api.sheetbest.com/sheets/c4d0a049-562b-4a08-9b1c-60631fcff8cf', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Run soumise avec succès !');
+                    window.location.href = 'index.html';
+                } else {
+                    throw new Error('Erreur lors de la soumission');
+                }
+            })
+            .catch(error => {
+                alert('Erreur : ' + error.message);
+            });
+        });
+    </script>
 </body>
 </html>
