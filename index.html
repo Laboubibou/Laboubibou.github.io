@@ -248,6 +248,12 @@
       font-size: 22px;
       cursor: pointer;
     }
+
+    .tab[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
   </style>
 </head>
 <body>
@@ -592,31 +598,92 @@
 
     // Dans la partie <script>, ajoute cette constante avec toutes les courses :
     const eventsByDiscipline = {
-        "bike": [
-            "Welcome to Riders", "The Giants", "Red Bull Holy Bike", "Don't Look Down", 
-            "Diving Board", "Frontier", "Skrrt Skrrt", "Ridge TV Lucky Straight",
-            "Sentinel Path", "A Nice Day Out…", "The Fissure Loop", "Liberty Cap Ride",
-            "Red Bull Road Rage", "Watchman Trail", "Burnt Rubber", "Understeer",
-            "Hoola Loop", "Santa Cruz Urban Ride", "Hospital Trail", "V-Loop",
-            "The Swell", "Red Bull Hardline", "Lost in Sequoia", "Floor by Floor",
-            "Xing", "Arrow Run", "Fox Racing Mtn. Rush", "Ford Foot Out"
+    "bike": {
+        "points": [
+            "Welcome to Riders",
+            "The Giants",
+            "Red Bull Holy Bike",
+            "Urban Freestyle",
+            "Diving Board",
+            "Skrrt Skrrt",
+            "Ridge TV Lucky Straight",
+            "Santa Cruz Urban Ride"
         ],
-        "snow": [
-            "Dreamline", "Spring Diet", "Pathfinder", "Red Bull Homerun",
-            "Hold Your Breath", "Backbone", "Ice Edge", "8 Ball",
-            "Ridge TV Multiball", "Killing Moon", "Dirty Hairy",
-            "Bears On The Heels", "Ridge TV Snow Rush", "In Between The Line",
-            "Trees To One Go!", "Rossignol Feel The Powder", "Back On Track",
-            "For Real", "Elbow To Elbow", "Salomon All In One"
-        ],
-        "air": [
-            "Ridge TV The Dragonfly", "King Run", "In Between The Domes",
-            "Hot Wings", "Migration", "Stream Rocket", "Rocket Congress",
-            "Ridge TV Angels Flight", "8 Shape", "Dine and Dash", "Rocky Road",
-            "Night Bird", "Canyon Loop", "Broken Wing", "Sunburn",
-            "The Crest", "0 Faults", "Red Bull Aces"
+        "time": [
+            "Don't Look Down",
+            "Frontier",
+            "Sentinel Path",
+            "A Nice Day Out…",
+            "The Fissure Loop",
+            "Liberty Cap Ride",
+            "Red Bull Road Rage",
+            "Watchman Trail",
+            "Burnt Rubber",
+            "Understeer",
+            "Hoola Loop",
+            "Hospital Trail",
+            "V-Loop",
+            "The Swell",
+            "Red Bull Hardline",
+            "Lost in Sequoia",
+            "Floor by Floor",
+            "Xing",
+            "Arrow Run",
+            "Fox Racing Mtn. Rush",
+            "Ford Foot Out"
         ]
-    };
+    },
+    "snow": {
+        "points": [
+            "Dreamline",
+            "Spring Diet",
+            "Ridge TV Multiball",
+            "Rossignol Feel The Powder"
+        ],
+        "time": [
+            "Pathfinder",
+            "Red Bull Homerun",
+            "Hold Your Breath",
+            "Backbone",
+            "Ice Edge",
+            "8 Ball",
+            "Killing Moon",
+            "Dirty Hairy",
+            "Bears On The Heels",
+            "Ridge TV Snow Rush",
+            "In Between The Line",
+            "Trees To One Go!",
+            "Back On Track",
+            "For Real",
+            "Elbow To Elbow",
+            "Salomon All In One"
+        ]
+    },
+    "air": {
+        "points": [
+            "Ridge TV The Dragonfly",
+            "King Run",
+            "Hot Wings",
+            "Ridge TV Angels Flight",
+            "8 Shape"
+        ],
+        "time": [
+            "In Between The Domes",
+            "Migration",
+            "Stream Rocket",
+            "Rocket Congress",
+            "Dine and Dash",
+            "Rocky Road",
+            "Night Bird",
+            "Canyon Loop",
+            "Broken Wing",
+            "Sunburn",
+            "The Crest",
+            "0 Faults",
+            "Red Bull Aces"
+        ]
+    }
+};
 
     // Remplace la partie des chips par :
     document.getElementById('disciplineChips').innerHTML = `
