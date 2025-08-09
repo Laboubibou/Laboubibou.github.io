@@ -7,8 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
     <style>
         :root {
@@ -160,9 +160,49 @@
             measurementId: "G-1D9YPCWK07"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+
+        // Attendre que Firebase soit initialisé
+        let authInitialized = false;
+
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!authInitialized) {
+                authInitialized = true;
+                if (user && window.location.pathname.includes('auth.html')) {
+                    window.location.replace('index.html');
+                }
+            }
+        });
+
+        // Gestion des formulaires de connexion/inscription
+        document.getElementById('loginFormElement').onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await firebase.auth().signInWithEmailAndPassword(
+                    document.getElementById('loginEmail').value,
+                    document.getElementById('loginPassword').value
+                );
+            } catch (error) {
+                showError(error.message);
+            }
+        };
+
+        document.getElementById('registerFormElement').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const username = document.getElementById('registerUsername').value;
+
+            try {
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({
+                    displayName: username
+                });
+                // La redirection sera gérée par onAuthStateChanged
+            } catch (error) {
+                showError(error.message);
+            }
+        };
 
         // Form switching
         document.getElementById('showRegister').onclick = e => {
@@ -185,45 +225,6 @@
             error.textContent = message;
             error.style.display = 'block';
         }
-
-        // Remplacer la vérification existante par celle-ci
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user && window.location.href.includes('auth.html')) {
-                // Rediriger vers index.html seulement si on est sur auth.html
-                window.location.replace('index.html');
-            }
-        });
-
-        // Modifier les handlers de connexion/inscription
-        document.getElementById('loginFormElement').onsubmit = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            try {
-                await firebase.auth().signInWithEmailAndPassword(email, password);
-                // La redirection sera gérée par onAuthStateChanged
-            } catch (error) {
-                showError(error.message);
-            }
-        };
-
-        document.getElementById('registerFormElement').onsubmit = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const username = document.getElementById('registerUsername').value;
-
-            try {
-                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                await userCredential.user.updateProfile({
-                    displayName: username
-                });
-                // La redirection sera gérée par onAuthStateChanged
-            } catch (error) {
-                showError(error.message);
-            }
-        };
     </script>
 </body>
 </html>

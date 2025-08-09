@@ -650,7 +650,9 @@
   </div>
 </div>
 
-  <script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
     // --- Import automatique depuis Google Sheets ---
     let sample = [];
 
@@ -1064,47 +1066,33 @@ document.getElementById('submitForm').onsubmit = function(e) {
     }
 
     // Remplacer la vérification de connexion existante par celle-ci
-document.addEventListener('DOMContentLoaded', () => {
-    // Vérifier l'authentification Firebase au lieu du localStorage
+<script>
+    // ...existing code...
+
+    let authInitialized = false;
+
     firebase.auth().onAuthStateChanged((user) => {
-        if (!user && !window.location.href.includes('auth.html')) {
-            // Rediriger vers auth.html seulement si on n'y est pas déjà
-            window.location.replace('auth.html');
+        if (!authInitialized) {
+            authInitialized = true;
+            if (!user && !window.location.pathname.includes('auth.html')) {
+                window.location.replace('auth.html');
+            } else if (user) {
+                // Mettre à jour l'interface utilisateur
+                document.getElementById('userAvatar').style.display = 'block';
+            }
         }
     });
-});
 
-    // Gestionnaire de déconnexion
+    // Gestion de la déconnexion
     document.getElementById('logoutBtn').addEventListener('click', async () => {
         try {
             await firebase.auth().signOut();
-            localStorage.removeItem('user');
             window.location.replace('auth.html');
         } catch (error) {
-            console.error('Erreur de déconnexion:', error);
+            console.error('Erreur lors de la déconnexion:', error);
         }
     });
-
-
-    document.getElementById('userAvatar').addEventListener('click', () => {
-    const logoutBtn = document.getElementById('logoutBtn');
-    logoutBtn.style.display = logoutBtn.style.display === 'none' ? 'block' : 'none';
-});
-
-// Cacher le bouton de déconnexion quand on clique ailleurs
-document.addEventListener('click', (e) => {
-    if (!e.target.matches('#userAvatar')) {
-        document.getElementById('logoutBtn').style.display = 'none';
-    }
-});
-
-// Vérifier si l'utilisateur est connecté au chargement
-document.addEventListener('DOMContentLoaded', () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) {
-        window.location.replace('auth.html');
-    }
-});
+</script>
   </script>
 </body>
 </html>
