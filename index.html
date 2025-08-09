@@ -508,25 +508,53 @@
     }
 
     // Interactions
-    document.getElementById('disciplineChips').addEventListener('click', (e) => {
+    document.getElementById('disciplineChips').addEventListener('click', function(e) {
       if (!e.target.classList.contains('chip')) return;
+      
+      // Met à jour les chips actifs
       document.querySelectorAll('#disciplineChips .chip').forEach(c => c.classList.remove('is-active'));
       e.target.classList.add('is-active');
-      state.discipline = e.target.dataset.value;
+      
+      // Récupère la discipline sélectionnée
+      const discipline = e.target.dataset.value;
+      state.discipline = discipline;
+      
+      // Met à jour la liste des épreuves selon le mode actuel (points/time)
+      updateEventsList(discipline, state.mode);
+      
       update();
     });
 
-    document.getElementById('eventSelect').addEventListener('change', e => { state.event = e.target.value; update(); });
-    document.getElementById('platformSelect').addEventListener('change', e => { state.platform = e.target.value; update(); });
+    function updateEventsList(discipline, mode) {
+    const eventSelect = document.getElementById('eventSelect');
+    eventSelect.innerHTML = '<option value="all">Toutes les épreuves</option>';
+    
+    if (discipline !== 'all' && eventsByDiscipline[discipline]) {
+        const eventType = mode === 'points' ? 'points' : 'time';
+        const events = eventsByDiscipline[discipline][eventType] || [];
+        
+        events.forEach(event => {
+            const option = document.createElement('option');
+            option.value = event;
+            option.textContent = event;
+            eventSelect.appendChild(option);
+        });
+    }
+}
 
     document.getElementById('modeTabs').addEventListener('click', (e) => {
-      if (!e.target.classList.contains('tab')) return;
-      document.querySelectorAll('#modeTabs .tab').forEach(t => t.classList.remove('is-active'));
-      e.target.classList.add('is-active');
-      state.mode = e.target.dataset.mode;
-      state.sort = state.mode === 'points' ? { key: 'score', dir: 'desc' } : { key: 'timeMs', dir: 'asc' };
-      update();
-    });
+    if (!e.target.classList.contains('tab')) return;
+    
+    document.querySelectorAll('#modeTabs .tab').forEach(t => t.classList.remove('is-active'));
+    e.target.classList.add('is-active');
+    
+    state.mode = e.target.dataset.mode;
+    
+    // Met à jour la liste des épreuves quand on change de mode
+    updateEventsList(state.discipline, state.mode);
+    
+    update();
+});
 
     document.getElementById('searchInput').addEventListener('input', e => { state.search = e.target.value; update(); });
     document.getElementById('clearSearch').addEventListener('click', () => { document.getElementById('searchInput').value=''; state.search=''; update(); });
@@ -600,16 +628,39 @@
     const eventsByDiscipline = {
     "bike": {
         "points": [
-            "Welcome to Riders",
-            "The Giants",
-            "Red Bull Holy Bike",
-            "Urban Freestyle",
-            "Diving Board",
-            "Skrrt Skrrt",
-            "Ridge TV Lucky Straight",
-            "Santa Cruz Urban Ride"
+            "The Crown",
+            "The Patriarch",
+            "Family Feud",
+            "Santa Cruz Gravity Fest",
+            "Once Upon a Line",
+            "Infinite Waves",
+            "Around The World",
+            "B-Side",
+            "Trout's Trail",
+            "Captain Cap",
+            "Red Bull Joyride",
+            "50/50",
+            "Splintered",
+            "King Monkey",
+            "The Flow",
+            "Red Bull District Ride",
+            "Colorado Rush",
+            "The Circus",
+            "Bangers and Crash",
+            "Canyon Dual Style",
+            "The Freezer",
+            "Red Bull Rampage",
+            "Red Bull Rampage 2017"
         ],
         "time": [
+           "Welcome to Riders'",
+           "The Giants",
+           "Red Bull Holy Bike",
+           "Urban Freestyle",
+           "Diving Board",
+           "Skrrt Skrrt",
+           "Ridge TV Luckt Straight",
+           "Santa Cruz Urban Ride",
             "Don't Look Down",
             "Frontier",
             "Sentinel Path",
@@ -635,24 +686,60 @@
     },
     "snow": {
         "points": [
-            "Dreamline",
-            "Spring Diet",
-            "Ridge TV Multiball",
-            "Rossignol Feel The Powder"
+            "Mammoth Can Jump",
+            "Taco'd",
+            "King Size",
+            "Red Bull Ultra Natural",
+            "The Bowl",
+            "Wolfpack",
+            "The Trunk",
+            "Eagles Are Flying",
+            "Snake Run",
+            "Burton Grove",
+            "Down of Teton",
+            "Bliss",
+            "Dude, Yu OK?",
+            "The Tusks",
+            "Ice Rider",
+            "Blind Test",
+            "Red Bull Linecatcher",
+            "Log Rider",
+            "Crest in Peace",
+            "Paint Scratch",
+            "Left Side",
+            "Hold My Bear",
+            "Ridge TV Option 7",
+            "Trees Don't Move",
+            "Tricks Derby",
+            "Sideways",
+            "The Village",
+            "Red Bull Play Streets",
+            "Snow Whisperer",
+            "Timber",
+            "Invasion",
+            "X-Games",
+            "Spine In The Dark",
+            "Rossignol Man Vs Wild",
+            "Red Bull Park Sessions",
+            "Salomon Masterclass"
         ],
         "time": [
+            "Dreamline",
+            "Spring Diet",
             "Pathfinder",
             "Red Bull Homerun",
             "Hold Your Breath",
             "Backbone",
             "Ice Edge",
             "8 Ball",
+            "Ridge TV Multiball",
             "Killing Moon",
             "Dirty Hairy",
             "Bears On The Heels",
             "Ridge TV Snow Rush",
             "In Between The Line",
             "Trees To One Go!",
+            "Rossignol Feel The Powder",
             "Back On Track",
             "For Real",
             "Elbow To Elbow",
@@ -661,17 +748,34 @@
     },
     "air": {
         "points": [
-            "Ridge TV The Dragonfly",
-            "King Run",
-            "Hot Wings",
-            "Ridge TV Angels Flight",
-            "8 Shape"
+            "More'o Rocky",
+            "Marble Fly",
+            "Look At The Whole",
+            "Narrow Canyon",
+            "Ridge TV Wall of Windows",
+            "Break Point",
+            "Frozen Wings",
+            "Hoodoo You Do ?",
+            "Half Dome Kisses",
+            "Fog This!",
+            "Ridge TV Night Wing",
+            "Thermal Shock",
+            "Underline",
+            "Canyon Flight",
+            "Last Subway",
+            "Ford The Dive"
+
         ],
         "time": [
+            "Ridge TV The Dragonfly",
+            "King Run",
             "In Between The Domes",
+            "Hot Wings",
             "Migration",
             "Stream Rocket",
             "Rocket Congress",
+            "Ridge TV Angels Flight",
+            "8 Shape",
             "Dine and Dash",
             "Rocky Road",
             "Night Bird",
