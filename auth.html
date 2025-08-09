@@ -151,19 +151,18 @@
     <script>
         // Configuration Firebase
         const firebaseConfig = {
-         apiKey: "AIzaSyD9OwXwwzkz4D9ICgwj4BTh1_cHJV2UVWA",
-         authDomain: "creation-de-compte-1.firebaseapp.com",
-         projectId: "creation-de-compte-1",
-         storageBucket: "creation-de-compte-1.firebasestorage.app",
-         messagingSenderId: "58322653126",
-         appId: "1:58322653126:web:1450b24d37459598362cc7",
-         measurementId: "G-1D9YPCWK07"
-     };
+            apiKey: "AIzaSyD9OwXwwzkz4D9ICgwj4BTh1_cHJV2UVWA",
+            authDomain: "creation-de-compte-1.firebaseapp.com",
+            projectId: "creation-de-compte-1",
+            storageBucket: "creation-de-compte-1.firebasestorage.app",
+            messagingSenderId: "58322653126",
+            appId: "1:58322653126:web:1450b24d37459598362cc7",
+            measurementId: "G-1D9YPCWK07"
+        };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-       </script>
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
         // Form switching
         document.getElementById('showRegister').onclick = e => {
