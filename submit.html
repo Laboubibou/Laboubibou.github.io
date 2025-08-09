@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Soumettre une run - Riders Republic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #0d0f10;
+      color: #e8ecef;
+      font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 24px 0 0 0;
+      text-align: center;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      margin: 0 0 12px 0;
+      letter-spacing: 1px;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+    }
+    .form-card {
+      background: #15181b;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      padding: 40px 32px 32px 32px;
+      width: 100%;
+      max-width: 440px;
+      margin: 32px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #a7b0b7;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #222;
+      background: #222;
+      color: #fff;
+      margin-bottom: 18px;
+      font-size: 1rem;
+    }
+    .time-fields {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      justify-content: space-between;
+    }
+    .time-fields input {
+      width: 100%;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: bold;
+      padding: 18px 0;
+      margin-bottom: 0;
+    }
+    .time-labels {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .time-labels span {
+      width: 100%;
+      text-align: center;
+      font-size: 1.1rem;
+      color: #f1ff00;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 1px;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px 0;
+      border-radius: 10px;
+      background: #f1ff00;
+      color: #111;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .back-link {
+      display: block;
+      margin: 0 auto 24px auto;
+      color: #21c9b6;
+      text-align: center;
+      text-decoration: underline;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .player-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: #f1ff00;
+    }
+    @media (max-width: 600px) {
+      .form-card { padding: 24px 8px; }
+      main { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html"><img src="logo.png" alt="Riders Republic Logo" class="logo" /></a>
+    <h1>Soumettre une run</h1>
+  </header>
+  <main>
+    <form class="form-card" id="submitForm">
+      <div class="player-name">Joueur : <span id="playerName">Non connecté</span></div>
+      <label>Discipline</label>
+      <select name="discipline" required>
+        <option value="">Choisir</option>
+        <option value="bike">Vélo</option>
+        <option value="ski/snow">Ski/Snow</option>
+        <option value="air">Air</option>
+        <option value="bmx">BMX</option>
+        <option value="skate">Skate</option>
+        <option value="autres">Autres</option>
+      </select>
+      <label>Épreuve</label>
+      <input type="text" name="event" required placeholder="Nom de l'épreuve" />
+      <label>Plateforme</label>
+      <select name="platform" required>
+        <option value="">Choisir</option>
+        <option value="PC">PC</option>
+        <option value="PlayStation">PlayStation</option>
+        <option value="Xbox">Xbox</option>
+      </select>
+      <label>Type</label>
+      <select name="type" id="typeSelect" required>
+        <option value="score">Score</option>
+        <option value="time">Temps</option>
+      </select>
+      <div id="scoreField">
+        <label>Score</label>
+        <input type="number" name="score" min="0" placeholder="Ex: 123456" />
+      </div>
+      <div id="timeFields" style="display:none;">
+        <div class="time-labels">
+          <span>h</span><span>m</span><span>s</span><span>ms</span>
+        </div>
+        <div class="time-fields">
+          <input type="number" name="hours" min="0" max="23" placeholder="0" />
+          <input type="number" name="minutes" min="0" max="59" placeholder="0" />
+          <input type="number" name="seconds" min="0" max="59" placeholder="0" />
+          <input type="number" name="milliseconds" min="0" max="999" placeholder="0" />
+        </div>
+      </div>
+      <label>Lien vidéo (preuve)</label>
+      <input type="url" name="proof_url" placeholder="https://..." />
+      <button type="submit">Envoyer</button>
+      <a href="index.html" class="back-link">← Retour au classement</a>
+    </form>
+  </main>
+  <script>
+    // Affichage dynamique score/temps
+    const typeSelect = document.getElementById('typeSelect');
+    const scoreField = document.getElementById('scoreField');
+    const timeFields = document.getElementById('timeFields');
+    typeSelect.onchange = function() {
+      if (this.value === 'time') {
+        scoreField.style.display = 'none';
+        timeFields.style.display = '';
+      } else {
+        scoreField.style.display = '';
+        timeFields.style.display = 'none';
+      }
+    };
+
+    // Simuler le nom du joueur (à remplacer par la vraie auth)
+    document.getElementById('playerName').textContent = "Non connecté";
+
+    // Gestion du formulaire
+    document.getElementById('submitForm').onsubmit = function(e) {
+      e.preventDefault();
+      // Récupérer les données
+      const data = Object.fromEntries(new FormData(this));
+      let value = "";
+      if (data.type === "score") {
+        value = data.score;
+      } else {
+        // Convertir h/m/s/ms en ms
+        const h = parseInt(data.hours) || 0;
+        const m = parseInt(data.minutes) || 0;
+        const s = parseInt(data.seconds) || 0;
+        const ms = parseInt(data.milliseconds) || 0;
+        value = ((h*60*60 + m*60 + s)*1000 + ms).toString();
+      }
+      // Préparer l'objet à envoyer
+      const toSend = {
+        participant: document.getElementById('playerName').textContent,
+        category: data.discipline,
+        event: data.event,
+        platform: data.platform,
+        type: data.type,
+        value: value,
+        proof_url: data.proof_url
+      };
+      // Affichage de confirmation (remplace par un POST Sheet.best si besoin)
+      alert("Merci ! Votre run a bien été soumise :\n" + JSON.stringify(toSend, null, 2));
+      this.reset();
+      scoreField.style.display = '';
+      timeFields.style.display = 'none';
+    };
+  </script>
+</body>
+</html>
