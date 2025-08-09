@@ -59,7 +59,12 @@
     .subtitle { color: var(--muted); margin-bottom: 22px; }
 
     .filters { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
-    .chip-group { grid-column: span 12; display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
     .chip {
       background: var(--surface);
       border: 1px solid rgba(255,255,255,.06);
@@ -99,9 +104,46 @@
       cursor: not-allowed;
     }
 
-    .tabs { margin-top: 12px; display: inline-flex; background: var(--surface); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; }
-    .tab { padding: 10px 14px; cursor: pointer; font-weight: 700; color: var(--muted); }
-    .tab.is-active { background: var(--brand); color: #111; }
+    .tabs {
+      display: inline-flex;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .tab {
+      padding: 10px 24px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--muted);
+      border: none;
+      background: transparent;
+    }
+    .tab.is-active {
+      background: var(--brand);
+      color: #111;
+    }
+
+    .event-select-wrapper {
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--text);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .select:focus {
+      outline: none;
+      border-color: var(--brand);
+    }
 
     .podium { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; margin: 20px 0; }
     .podium-card {
@@ -352,34 +394,27 @@
       <h1 class="title">Classements officieux Points & Chronos</h1>
       <div class="subtitle">Filtre par discipline, épreuve, plateforme ou recherche de joueur.</div>
 
-      <div class="filters">
-        <!-- Chips de discipline -->
-        <div class="chip-group" id="disciplineChips">
-          <button class="chip is-active" data-value="all">Tous</button>
-          <button class="chip" data-value="bike">Vélo</button>
-          <button class="chip" data-value="snow">Snow</button>
-          <button class="chip" data-value="air">Air</button>
-        </div>
+      <!-- Disciplines en haut -->
+      <div class="chip-group" id="disciplineChips">
+        <button class="chip is-active" data-value="all">Tous</button>
+        <button class="chip" data-value="bike">Vélo</button>
+        <button class="chip" data-value="snow">Snow</button>
+        <button class="chip" data-value="air">Air</button>
+      </div>
 
-        <!-- Nouvelle disposition en colonnes -->
-        <div class="filter-columns">
-          <!-- Colonne de gauche : Points/Chronos -->
-          <div class="filter-column">
-            <label>Type de record</label>
-            <div class="tabs" id="modeTabs">
-              <button class="tab is-active" data-mode="points">Points</button>
-              <button class="tab" data-mode="time">Chronos</button>
-            </div>
-          </div>
-
-          <!-- Colonne de droite : Épreuves -->
-          <div class="filter-column">
-            <label>Épreuve</label>
-            <select class="select" id="eventSelect">
-              <option value="all">Choisir d'abord une discipline</option>
-            </select>
-          </div>
+      <!-- Type de record -->
+      <div class="filter-section">
+        <div class="tabs" id="modeTabs">
+          <button class="tab is-active" data-mode="points">Points</button>
+          <button class="tab" data-mode="time">Chronos</button>
         </div>
+      </div>
+
+      <!-- Sélection d'épreuve en bas -->
+      <div class="event-select-wrapper">
+        <select class="select" id="eventSelect">
+          <option value="all">Choisir d'abord une discipline</option>
+        </select>
       </div>
     </section>
 
