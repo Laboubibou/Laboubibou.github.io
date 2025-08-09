@@ -462,13 +462,12 @@
 }
 
     .user-menu {
+        position: absolute;
+        top: 16px;
+        right: 16px;
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 8px;
-        border-radius: 8px;
-        background: var(--surface);
-        margin-left: auto;
     }
 
     .user-info {
@@ -478,29 +477,30 @@
     }
 
     .user-avatar {
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.2s;
     }
 
-    #userName {
-        color: var(--text);
-        font-weight: 600;
+    .user-avatar:hover {
+        transform: scale(1.1);
     }
 
     .logout-btn {
-        padding: 6px 12px;
-        border-radius: 6px;
-        background: rgba(255,255,255,.1);
-        border: none;
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        padding: 8px 16px;
+        background: var(--surface);
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 8px;
         color: var(--text);
         cursor: pointer;
-        font-size: 14px;
-    }
-
-    .logout-btn:hover {
-        background: rgba(255,255,255,.2);
     }
   </style>
 </head>
@@ -521,11 +521,8 @@
     </div>
 
     <div class="user-menu" id="userMenu">
-        <div class="user-info">
-            <span id="userName">Non connecté</span>
-            <img src="user.png" alt="Avatar" class="user-avatar" id="userAvatar">
-        </div>
-        <button id="logoutBtn" class="logout-btn" style="display: none;">Déconnexion</button>
+        <img src="user.png" alt="Avatar" class="user-avatar" id="userAvatar">
+        <button id="logoutBtn" class="logout-btn">Déconnexion</button>
     </div>
   </header>
 
@@ -1074,6 +1071,26 @@ document.getElementById('submitForm').onsubmit = function(e) {
 
     // Vérifie l'état de connexion au chargement
     document.addEventListener('DOMContentLoaded', checkAuthState);
+
+    document.getElementById('userAvatar').addEventListener('click', () => {
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.style.display = logoutBtn.style.display === 'none' ? 'block' : 'none';
+});
+
+// Cacher le bouton de déconnexion quand on clique ailleurs
+document.addEventListener('click', (e) => {
+    if (!e.target.matches('#userAvatar')) {
+        document.getElementById('logoutBtn').style.display = 'none';
+    }
+});
+
+// Vérifier si l'utilisateur est connecté au chargement
+document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+        window.location.replace('auth.html');
+    }
+});
   </script>
 </body>
 </html>

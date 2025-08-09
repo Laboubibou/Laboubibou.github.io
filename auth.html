@@ -195,7 +195,10 @@
             try {
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 localStorage.setItem('user', JSON.stringify(userCredential.user));
-                window.location.href = 'index.html';
+                // Vérification que l'utilisateur est bien connecté avant la redirection
+                if (userCredential.user) {
+                    window.location.replace('index.html');
+                }
             } catch (error) {
                 showError(error.message);
             }
@@ -214,7 +217,9 @@
                     displayName: username
                 });
                 localStorage.setItem('user', JSON.stringify(userCredential.user));
-                window.location.href = 'index.html';
+                if (userCredential.user) {
+                    window.location.replace('index.html');
+                }
             } catch (error) {
                 showError(error.message);
             }
