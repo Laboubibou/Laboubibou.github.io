@@ -58,28 +58,66 @@
     .title { font-family: 'Bebas Neue', sans-serif; letter-spacing: .5px; font-size: clamp(30px, 5vw, 52px); line-height: 1; margin: 2px 0 14px; }
     .subtitle { color: var(--muted); margin-bottom: 22px; }
 
-    .filters { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+    .filters {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
     .chip-group {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 20px;
     }
     .chip {
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,.06);
-      color: var(--text);
-      padding: 8px 12px;
+      padding: 8px 16px;
       border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--text);
       cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.3s ease;
     }
     .chip.is-active {
       background: var(--brand);
       color: #111;
-      border-color: rgba(0,0,0,.1);
+    }
+    .select-group {
+      width: 100%;
+    }
+    .select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .mode-group {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .tabs.compact {
+      display: inline-flex;
+      background: var(--surface);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .tab {
+      padding: 8px 16px;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      min-width: 80px;
+    }
+    .tab.is-active {
+      background: var(--brand);
+      color: #111;
     }
 
     .field { grid-column: span 6; display: flex; flex-direction: column; gap: 8px; }
@@ -402,9 +440,8 @@
       <h1 class="title">Classements officieux Points & Chronos</h1>
       <div class="subtitle">Filtre par discipline, épreuve, plateforme ou recherche de joueur.</div>
 
-      <!-- Filtres -->
       <div class="filters">
-        <!-- Disciplines -->
+        <!-- Disciplines en haut -->
         <div class="chip-group" id="disciplineChips">
           <button class="chip is-active" data-value="all">Tous</button>
           <button class="chip" data-value="bike">Vélo</button>
@@ -412,19 +449,19 @@
           <button class="chip" data-value="air">Air</button>
         </div>
 
-        <!-- Points/Chronos compact -->
-        <div class="mode-container">
-          <div class="tabs" id="modeTabs">
+        <!-- Liste déroulante des épreuves -->
+        <div class="select-group">
+          <select class="select" id="eventSelect">
+            <option value="all">Toutes les épreuves</option>
+          </select>
+        </div>
+
+        <!-- Points/Chronos en bas -->
+        <div class="mode-group">
+          <div class="tabs compact" id="modeTabs">
             <button class="tab is-active" data-mode="points">Points</button>
             <button class="tab" data-mode="time">Chronos</button>
           </div>
-        </div>
-
-        <!-- Select avec dropdown vers le bas -->
-        <div class="event-select">
-          <select id="eventSelect">
-            <option value="all">Choisir une épreuve</option>
-          </select>
         </div>
       </div>
     </section>
@@ -635,28 +672,35 @@ const state = {
   state.discipline = e.target.dataset.value;
   state.event = 'all';
 
-  // Force l'utilisation du mode actuel
-  const activeTab = document.querySelector('#modeTabs .tab.is-active');
-  if (activeTab) {
-    state.mode = activeTab.dataset.mode;
+  // Active/désactive les tabs Points/Chronos
+  const modeTabs = document.getElementById('modeTabs');
+  if (state.discipline === 'all') {
+    modeTabs.style.opacity = '0.5';
+    modeTabs.style.pointerEvents = 'none';
+    document.getElementById('eventSelect').innerHTML = '<option value="all">Choisir d\'abord une discipline</option>';
+  } else {
+    modeTabs.style.opacity = '1';
+    modeTabs.style.pointerEvents = 'auto';
+    updateEventsList(state.discipline, state.mode);
   }
 
-  updateEventsList(state.discipline, state.mode);
   update();
 });
 
-    // Modifie le gestionnaire des tabs Points/Chronos
+    // Gestion des tabs Points/Chronos
     document.getElementById('modeTabs').addEventListener('click', e => {
   if (!e.target.classList.contains('tab')) return;
-  if (e.target.classList.contains('is-active')) return; // Évite le re-clic inutile
 
   document.querySelectorAll('#modeTabs .tab').forEach(t => t.classList.remove('is-active'));
   e.target.classList.add('is-active');
 
   state.mode = e.target.dataset.mode;
+  state.event = 'all';
+
   if (state.discipline !== 'all') {
     updateEventsList(state.discipline, state.mode);
   }
+
   update();
 });
 
