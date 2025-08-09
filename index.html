@@ -111,20 +111,157 @@
       .title { font-size: 34px; }
       .toolbar { flex-direction: column; align-items: stretch; }
     }
+
+    #adminModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #adminModal .modal-content {
+      background: #15181b;
+      color: #e8ecef;
+      padding: 32px 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    #adminModal h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+
+    #adminModal label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    #adminModal input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #222;
+      background: #222;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    #adminModal button[type="submit"] {
+      width: 100%;
+      padding: 12px 0;
+      border-radius: 8px;
+      background: #f1ff00;
+      color: #111;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    #closeAdmin {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    #submitModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #submitModal .modal-content {
+      background: #15181b;
+      color: #e8ecef;
+      padding: 32px 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+      width: 90%;
+      max-width: 420px;
+      position: relative;
+    }
+
+    #submitModal h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+
+    #submitModal label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    #submitModal input,
+    #submitModal select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #222;
+      background: #222;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    #submitModal button[type="submit"] {
+      width: 100%;
+      padding: 12px 0;
+      border-radius: 8px;
+      background: #f1ff00;
+      color: #111;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    #closeSubmit {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <header class="header">
     <div class="container nav">
       <div class="brand">
-        <img src="logo.png" alt="Riders Republic Logo" class="brand-badge" style="object-fit:cover;" />
+        <img src="logo.png" alt="Riders Republic Logo" style="width:36px;height:36px;border-radius:10px;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.35);" />
         <div>
           <div style="font-weight:900;">Riders Republic</div>
           <div style="font-size:12px;color:var(--muted);margin-top:-2px;">Classements communautaires</div>
         </div>
       </div>
       <div class="nav-cta">
-        <a class="btn" href="/auth">Admin / Auth</a>
+        <a class="btn" href="/auth">Admin</a>
         <a class="btn btn--brand" href="#" id="addRunBtn">+ Soumettre une run</a>
       </div>
     </div>
@@ -201,6 +338,60 @@
       <div class="rows" id="rows"></div>
     </section>
   </main>
+
+  <div id="adminModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#15181b;color:#e8ecef;padding:32px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);width:90%;max-width:400px;position:relative;">
+      <button id="closeAdmin" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;">&times;</button>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:18px;">Connexion Admin</h2>
+      <form>
+        <label style="display:block;margin-bottom:8px;">Identifiant</label>
+        <input type="text" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #222;background:#222;color:#fff;margin-bottom:16px;" placeholder="Nom d'utilisateur" />
+        <label style="display:block;margin-bottom:8px;">Mot de passe</label>
+        <input type="password" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #222;background:#222;color:#fff;margin-bottom:24px;" placeholder="Mot de passe" />
+        <button type="submit" style="width:100%;padding:12px 0;border-radius:8px;background:#f1ff00;color:#111;font-weight:700;font-size:1rem;border:none;cursor:pointer;">Se connecter</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="submitModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#15181b;color:#e8ecef;padding:32px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);width:90%;max-width:420px;position:relative;">
+      <button id="closeSubmit" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;">&times;</button>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:18px;">Soumettre une run</h2>
+      <form id="submitForm">
+        <label>Joueur</label>
+        <input type="text" name="player" required placeholder="Nom du joueur" />
+        <label>Discipline</label>
+        <select name="discipline" required>
+          <option value="">Choisir</option>
+          <option value="bike">Vélo</option>
+          <option value="ski/snow">Ski/Snow</option>
+          <option value="air">Air</option>
+          <option value="bmx">BMX</option>
+          <option value="skate">Skate</option>
+          <option value="autres">Autres</option>
+        </select>
+        <label>Épreuve</label>
+        <input type="text" name="event" required placeholder="Nom de l'épreuve" />
+        <label>Plateforme</label>
+        <select name="platform" required>
+          <option value="">Choisir</option>
+          <option value="PC">PC</option>
+          <option value="PlayStation">PlayStation</option>
+          <option value="Xbox">Xbox</option>
+        </select>
+        <label>Type</label>
+        <select name="type" required>
+          <option value="score">Score</option>
+          <option value="time">Temps</option>
+        </select>
+        <label>Valeur (score ou temps en ms)</label>
+        <input type="number" name="value" required placeholder="Ex: 123456" />
+        <label>Lien vidéo (preuve)</label>
+        <input type="url" name="proof_url" placeholder="https://..." />
+        <button type="submit" style="width:100%;padding:12px 0;border-radius:8px;background:#f1ff00;color:#111;font-weight:700;font-size:1rem;border:none;cursor:pointer;margin-top:16px;">Envoyer</button>
+      </form>
+    </div>
+  </div>
 
   <script>
     // --- Import automatique depuis Google Sheets ---
@@ -368,6 +559,40 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href=url; a.download='classement_rr.csv'; a.click(); URL.revokeObjectURL(url);
     });
+
+    document.querySelector('.nav-cta .btn').addEventListener('click', function(e) {
+      if (this.textContent.includes('Admin')) {
+        e.preventDefault();
+        document.getElementById('adminModal').style.display = 'flex';
+      }
+    });
+    document.getElementById('closeAdmin').onclick = () => {
+      document.getElementById('adminModal').style.display = 'none';
+    };
+    document.querySelector('#adminModal form').onsubmit = e => {
+      e.preventDefault();
+      // Ajoute ici la logique d'authentification si besoin
+      alert('Connexion admin simulée !');
+      document.getElementById('adminModal').style.display = 'none';
+    };
+
+    // Ouvre la modale "Soumettre une run"
+    document.getElementById('addRunBtn').onclick = function(e) {
+      e.preventDefault();
+      document.getElementById('submitModal').style.display = 'flex';
+    };
+    // Ferme la modale
+    document.getElementById('closeSubmit').onclick = function() {
+      document.getElementById('submitModal').style.display = 'none';
+    };
+    // Gestion du formulaire (ici, affichage d'une alerte, à remplacer par un POST vers Sheet.best ou autre)
+    document.getElementById('submitForm').onsubmit = function(e) {
+      e.preventDefault();
+      alert('Merci ! Votre run a bien été soumise (fonctionnalité à connecter à Sheet.best ou Google Forms pour l\'envoi réel).');
+      document.getElementById('submitModal').style.display = 'none';
+      this.reset();
+    };
+
 
     state.sort = { key: 'score', dir: 'desc' };
     // update(); // plus besoin, sera appelé après fetch
