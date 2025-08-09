@@ -19,5 +19,11 @@
     "nodemailer": "6.9.13",
     "qrcode": "1.5.3",
     "speakeasy": "2.0.0"
-  }
+  },
+  "description": "Features:\r - Email/password auth with bcrypt\r - Email verification\r - MFA (TOTP) with QR code\r - JWT access + refresh with rotation\r - Sessions management and revocation\r - Password reset flow\r - Rate limiting, Helmet, CORS\r - Email notifications (console by default)",
+  "main": "index.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
