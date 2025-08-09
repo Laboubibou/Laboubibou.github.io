@@ -1,256 +1,230 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Auth Avancée - Démo</title>
-  <style>
-    body { font-family: sans-serif; margin: 2rem; }
-    .auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg);
-    padding: 20px;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification - Riders Republic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
-.auth-card {
-    background: var(--surface);
-    padding: 32px;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.2);
-}
+    <style>
+        :root {
+            --bg: #0d0f10;
+            --surface: #15181b;
+            --text: #e8ecef;
+            --brand: #f1ff00;
+            --error: #ff3333;
+        }
 
-.auth-form h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    margin-bottom: 24px;
-    color: var(--text);
-}
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.form-group {
-    margin-bottom: 16px;
-}
+        .auth-card {
+            background: var(--surface);
+            padding: 32px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+        }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text);
-}
+        .form-group {
+            margin-bottom: 16px;
+        }
 
-.form-group input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    background: var(--bg);
-    border: 1px solid rgba(255,255,255,.1);
-    color: var(--text);
-}
+        .form-group label {
+            display: block;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
 
-.btn-submit {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    background: var(--brand);
-    color: #111;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-}
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg);
+            border: 1px solid rgba(255,255,255,.1);
+            color: var(--text);
+            font-size: 16px;
+        }
 
-.auth-switch {
-    text-align: center;
-    margin-top: 20px;
-    color: var(--text);
-}
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--brand);
+            color: #111;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-.auth-switch a {
-    color: var(--brand);
-    text-decoration: none;
-    font-weight: 600;
-}
+        .error {
+            background: rgba(255,0,0,0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
 
-.error {
-    background: rgba(255,0,0,0.1);
-    border: 1px solid rgba(255,0,0,0.2);
-    color: #ff3333;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    font-size: 14px;
-}
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
+        h2 {
+            color: var(--text);
+            margin: 0 0 24px 0;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text);
+        }
+
+        .auth-switch a {
+            color: var(--brand);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
-  <div class="auth-container">
     <div class="auth-card">
-        <div id="error-message" class="error" style="display:none;"></div>
-        
+        <div id="error" class="error"></div>
+
         <!-- Login Form -->
-        <div id="loginForm" class="auth-form">
+        <div id="loginForm">
             <h2>Connexion</h2>
-            <form onsubmit="event.preventDefault(); handleLogin(this.email.value, this.password.value);">
+            <form id="loginFormElement">
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" name="email" required>
+                    <input type="email" id="loginEmail" required>
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
-                    <input type="password" name="password" required>
+                    <input type="password" id="loginPassword" required>
                 </div>
-                <button type="submit" class="btn-submit">Se connecter</button>
+                <button type="submit">Se connecter</button>
             </form>
             <p class="auth-switch">
                 Pas encore de compte ? 
-                <a href="#" onclick="toggleForms()">Créer un compte</a>
+                <a href="#" id="showRegister">Créer un compte</a>
             </p>
         </div>
 
         <!-- Register Form -->
-        <div id="registerForm" class="auth-form" style="display:none;">
+        <div id="registerForm" style="display: none;">
             <h2>Créer un compte</h2>
-            <form onsubmit="event.preventDefault(); handleRegister(this.username.value, this.email.value, this.password.value);">
+            <form id="registerFormElement">
                 <div class="form-group">
                     <label>Nom d'utilisateur</label>
-                    <input type="text" name="username" required>
+                    <input type="text" id="registerUsername" required>
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" name="email" required>
+                    <input type="email" id="registerEmail" required>
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
-                    <input type="password" name="password" required minlength="6">
+                    <input type="password" id="registerPassword" required minlength="6">
                 </div>
-                <button type="submit" class="btn-submit">Créer mon compte</button>
+                <button type="submit">Créer mon compte</button>
             </form>
             <p class="auth-switch">
                 Déjà un compte ? 
-                <a href="#" onclick="toggleForms()">Se connecter</a>
+                <a href="#" id="showLogin">Se connecter</a>
             </p>
         </div>
     </div>
-  </div>
 
-  <script>
-    const api = (path, opts={}) => fetch(`/api/auth${path}`, { method: 'GET', ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers||{}) } });
-    const setText = (id, val) => document.getElementById(id).textContent = val || '-';
-
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('regUsername').value;
-      const email = document.getElementById('regEmail').value;
-      const password = document.getElementById('regPassword').value;
-      const passwordConfirm = document.getElementById('regPasswordConfirm').value;
-      if (password !== passwordConfirm) { alert('Les mots de passe ne correspondent pas.'); return; }
-      const r = await api('/register', { method: 'POST', body: JSON.stringify({ username, email, password }) });
-      alert('Inscription effectuée, vérifiez l\'email dans la console.');
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      const totp = document.getElementById('loginTotp').value || undefined;
-      const r = await api('/login', { method: 'POST', body: JSON.stringify({ email, password, totp }) });
-      const data = await r.json();
-      if (!r.ok) { alert(JSON.stringify(data)); return; }
-      setText('accessToken', data.accessToken);
-      setText('refreshToken', data.refreshToken);
-    });
-
-    document.getElementById('refreshBtn').addEventListener('click', async () => {
-      const refreshToken = document.getElementById('refreshToken').textContent;
-      const r = await api('/refresh', { method: 'POST', body: JSON.stringify({ refreshToken }) });
-      const data = await r.json();
-      if (!r.ok) { alert(JSON.stringify(data)); return; }
-      setText('accessToken', data.accessToken);
-      setText('refreshToken', data.refreshToken);
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      const refreshToken = document.getElementById('refreshToken').textContent;
-      await api('/logout', { method: 'POST', body: JSON.stringify({ refreshToken }) });
-      setText('accessToken', '-');
-      setText('refreshToken', '-');
-    });
-
-    document.getElementById('requestReset').addEventListener('click', async () => {
-      const email = document.getElementById('loginEmail').value;
-      await api('/request-password-reset', { method: 'POST', body: JSON.stringify({ email }) });
-      alert('Email de réinitialisation envoyé (voir console).');
-    });
-
-    document.getElementById('enableMfaForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userId = Number(document.getElementById('userIdForMfa').value);
-      const r = await api('/enable-mfa', { method: 'POST', body: JSON.stringify({ userId }) });
-      const data = await r.json();
-      if (!r.ok) { alert(JSON.stringify(data)); return; }
-      document.getElementById('mfaQr').src = data.qrImageDataUrl;
-      document.getElementById('mfaSecret').textContent = data.secret;
-    });
-
-    document.getElementById('confirmMfaForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userId = Number(document.getElementById('userIdForMfa2').value);
-      const totp = document.getElementById('mfaTotp').value;
-      const r = await api('/confirm-mfa', { method: 'POST', body: JSON.stringify({ userId, totp }) });
-      const data = await r.json();
-      if (!r.ok) { alert(JSON.stringify(data)); return; }
-      alert('MFA activée');
-    });
-
-    document.getElementById('listSessionsForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userId = Number(document.getElementById('userIdForSessions').value);
-      const r = await fetch(`/api/auth/sessions?userId=${userId}`);
-      const data = await r.json();
-      document.getElementById('sessions').textContent = JSON.stringify(data.sessions, null, 2);
-    });
-
-    document.getElementById('revokeSessionForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userId = Number(document.getElementById('userIdForRevoke').value);
-      const sessionId = Number(document.getElementById('sessionIdToRevoke').value);
-      const r = await api('/sessions/revoke', { method: 'POST', body: JSON.stringify({ userId, sessionId }) });
-      if (!r.ok) { alert('Erreur'); return; }
-      alert('Session révoquée');
-    });
-
-    function toggleForms() {
-      const loginForm = document.getElementById('loginForm');
-      const registerForm = document.getElementById('registerForm');
-      
-      if (loginForm.style.display === 'none') {
-          loginForm.style.display = 'block';
-          registerForm.style.display = 'none';
-      } else {
-          loginForm.style.display = 'none';
-          registerForm.style.display = 'block';
-      }
-    }
-
-    // Gestion des formulaires
-    document.querySelectorAll('.auth-form form').forEach(form => {
-        form.onsubmit = (e) => {
-            e.preventDefault();
-            const isLogin = form.parentElement.id === 'loginForm';
-            
-            // TODO: Ajouter la logique d'authentification/inscription
-            console.log(isLogin ? 'Tentative de connexion' : 'Tentative d\'inscription');
-            
-            // Pour le moment, simule une redirection
-            alert(isLogin ? 'Connexion réussie !' : 'Compte créé avec succès !');
-            window.location.href = 'index.html';
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7O31k-h_9ezVW2OXk8PHlb9mbGBGnyLI",
+            authDomain: "riders-republic-ranks.firebaseapp.com",
+            projectId: "riders-republic-ranks",
+            storageBucket: "riders-republic-ranks.appspot.com",
+            messagingSenderId: "432391402135",
+            appId: "1:432391402135:web:d36d948ce0276748e55161"
         };
-    });
-  </script>
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Form switching
+        document.getElementById('showRegister').onclick = e => {
+            e.preventDefault();
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+        };
+
+        document.getElementById('showLogin').onclick = e => {
+            e.preventDefault();
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+        };
+
+        // Show error function
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        // Login form handler
+        document.getElementById('loginFormElement').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                localStorage.setItem('user', JSON.stringify(userCredential.user));
+                window.location.href = 'index.html';
+            } catch (error) {
+                showError(error.message);
+            }
+        };
+
+        // Register form handler
+        document.getElementById('registerFormElement').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const username = document.getElementById('registerUsername').value;
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({
+                    displayName: username
+                });
+                localStorage.setItem('user', JSON.stringify(userCredential.user));
+                window.location.href = 'index.html';
+            } catch (error) {
+                showError(error.message);
+            }
+        };
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
 </body>
 </html>
