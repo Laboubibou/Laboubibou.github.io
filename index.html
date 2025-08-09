@@ -108,16 +108,20 @@
       display: inline-flex;
       background: var(--surface);
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px;
+      border-radius: 8px;
       overflow: hidden;
+      width: auto; /* Au lieu de 100% */
+      margin: 20px 0;
     }
     .tab {
-      padding: 10px 24px;
+      padding: 8px 16px; /* Réduit le padding */
       cursor: pointer;
-      font-weight: 700;
-      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px; /* Texte légèrement plus petit */
+      color: var(--text);
       border: none;
       background: transparent;
+      min-width: 80px; /* Largeur minimum */
     }
     .tab.is-active {
       background: var(--brand);
@@ -131,13 +135,17 @@
 
     .select {
       width: 100%;
-      padding: 12px 16px;
-      border-radius: var(--radius);
+      padding: 12px;
       background: var(--surface);
       border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
       color: var(--text);
-      font-size: 16px;
       cursor: pointer;
+      appearance: none; /* Personnalise la flèche du select */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
     }
 
     .select:focus {
@@ -394,27 +402,30 @@
       <h1 class="title">Classements officieux Points & Chronos</h1>
       <div class="subtitle">Filtre par discipline, épreuve, plateforme ou recherche de joueur.</div>
 
-      <!-- Disciplines en haut -->
-      <div class="chip-group" id="disciplineChips">
-        <button class="chip is-active" data-value="all">Tous</button>
-        <button class="chip" data-value="bike">Vélo</button>
-        <button class="chip" data-value="snow">Snow</button>
-        <button class="chip" data-value="air">Air</button>
-      </div>
-
-      <!-- Type de record -->
-      <div class="filter-section">
-        <div class="tabs" id="modeTabs">
-          <button class="tab is-active" data-mode="points">Points</button>
-          <button class="tab" data-mode="time">Chronos</button>
+      <!-- Filtres -->
+      <div class="filters">
+        <!-- Disciplines -->
+        <div class="chip-group" id="disciplineChips">
+          <button class="chip is-active" data-value="all">Tous</button>
+          <button class="chip" data-value="bike">Vélo</button>
+          <button class="chip" data-value="snow">Snow</button>
+          <button class="chip" data-value="air">Air</button>
         </div>
-      </div>
 
-      <!-- Sélection d'épreuve en bas -->
-      <div class="event-select-wrapper">
-        <select class="select" id="eventSelect">
-          <option value="all">Choisir d'abord une discipline</option>
-        </select>
+        <!-- Points/Chronos compact -->
+        <div class="mode-container">
+          <div class="tabs" id="modeTabs">
+            <button class="tab is-active" data-mode="points">Points</button>
+            <button class="tab" data-mode="time">Chronos</button>
+          </div>
+        </div>
+
+        <!-- Select avec dropdown vers le bas -->
+        <div class="event-select">
+          <select id="eventSelect">
+            <option value="all">Choisir une épreuve</option>
+          </select>
+        </div>
       </div>
     </section>
 
@@ -624,35 +635,28 @@ const state = {
   state.discipline = e.target.dataset.value;
   state.event = 'all';
 
-  // Active/désactive les tabs Points/Chronos
-  const modeTabs = document.getElementById('modeTabs');
-  if (state.discipline === 'all') {
-    modeTabs.style.opacity = '0.5';
-    modeTabs.style.pointerEvents = 'none';
-    document.getElementById('eventSelect').innerHTML = '<option value="all">Choisir d\'abord une discipline</option>';
-  } else {
-    modeTabs.style.opacity = '1';
-    modeTabs.style.pointerEvents = 'auto';
-    updateEventsList(state.discipline, state.mode);
+  // Force l'utilisation du mode actuel
+  const activeTab = document.querySelector('#modeTabs .tab.is-active');
+  if (activeTab) {
+    state.mode = activeTab.dataset.mode;
   }
 
+  updateEventsList(state.discipline, state.mode);
   update();
 });
 
-    // Gestion des tabs Points/Chronos
+    // Modifie le gestionnaire des tabs Points/Chronos
     document.getElementById('modeTabs').addEventListener('click', e => {
   if (!e.target.classList.contains('tab')) return;
+  if (e.target.classList.contains('is-active')) return; // Évite le re-clic inutile
 
   document.querySelectorAll('#modeTabs .tab').forEach(t => t.classList.remove('is-active'));
   e.target.classList.add('is-active');
 
   state.mode = e.target.dataset.mode;
-  state.event = 'all';
-
   if (state.discipline !== 'all') {
     updateEventsList(state.discipline, state.mode);
   }
-
   update();
 });
 
