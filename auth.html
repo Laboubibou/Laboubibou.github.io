@@ -114,22 +114,6 @@
         </div>
     </div>
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyD9OwXwwzkz4D9ICgwj4BTh1_cHJV2UVWA",
-            authDomain: "creation-de-compte-1.firebaseapp.com",
-            projectId: "creation-de-compte-1",
-            storageBucket: "creation-de-compte-1.firebasestorage.app",
-            messagingSenderId: "58322653126",
-            appId: "1:58322653126:web:1450b24d37459598362cc7"
-        };
-        firebase.initializeApp(firebaseConfig);
-
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (user && window.location.pathname.endsWith('auth.html')) {
-                window.location.replace('index.html');
-            }
-        });
-
         document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;

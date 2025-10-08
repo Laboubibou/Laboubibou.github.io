@@ -1121,13 +1121,6 @@ document.getElementById('submitForm').onsubmit = function(e) {
 </script>
   </script>
   <script>
-async function init() {
-    const user = await checkAuth();
-    if (!user) {
-        window.location.replace('/auth.html');
-        return;
-    }
-
     // Configuration du menu utilisateur
     const userMenu = document.getElementById('userMenu');
     const logoutBtn = document.getElementById('logoutBtn');
